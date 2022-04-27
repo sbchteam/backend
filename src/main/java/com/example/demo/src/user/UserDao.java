@@ -83,9 +83,9 @@ public class UserDao {
         );
 
     }
-    public UserAddress certifyUserAddress(int locationId, int userId){
+    public UserAddress certifyUserAddress(int locationId, int userId,int certifyStatus){
         String certifyUserAddressQuery = "update user_location set certify_status=? where id=? && user_id=?";
-        Object[] certifyUserAddressParams = new Object[]{1,locationId,userId};
+        Object[] certifyUserAddressParams = new Object[]{certifyStatus,locationId,userId};
         this.jdbcTemplate.update(certifyUserAddressQuery, certifyUserAddressParams);
 
         UserAddress userAddress=getUserAddress(locationId);
