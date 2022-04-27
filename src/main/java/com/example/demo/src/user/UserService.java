@@ -95,7 +95,6 @@ public class UserService {
         List<String> searchResult=new ArrayList<String>();
         AddressSearchList addressSearchList=new AddressSearchList();
         try {
-
             // 파라미터를 사용하여 요청 URL을 구성한다.
             String apiURL = "https://dapi.kakao.com/v2/local/search/address.json?" +
                     "query=" + dong;
@@ -125,8 +124,6 @@ public class UserService {
                 //region3 정리
                 String region3=region3_d;
                 if(!(region3_h.isEmpty())){
-//                    System.out.println(region3_h.isEmpty());
-//                    System.out.println("여기안");
                     region3=region3_h;
                 }
 
@@ -178,12 +175,12 @@ public class UserService {
 
             JSONParser jsonParser=new JSONParser();
             JSONObject jsonObject=(JSONObject)jsonParser.parse(result.getBody());
-            System.out.println(result.getBody());
             JSONArray jsonArray=(JSONArray)jsonObject.get("documents");
 
             JSONObject local=(JSONObject)jsonArray.get(0);
             JSONObject jsonArray1=(JSONObject)local.get("address");
             String localAddress=(String)jsonArray1.get("address_name");
+
             //userdao에서 region1,2,3가져옴, 여기서 리턴되는 region1,2,3이랑 비교해서 같으면 인증 성공 다르면 인증실패
             String region1=(String)jsonArray1.get("region_1depth_name");
             String region2=(String)jsonArray1.get("region_2depth_name");
