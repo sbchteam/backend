@@ -60,6 +60,49 @@ public class UserDao {
         );
 
     }
+    public UserAddress getUserAddress(int locationId){
+        String getUserAddressQuery = "select * from user_location where id = ?";
+
+        return this.jdbcTemplate.queryForObject(getUserAddressQuery,
+                (rs,rowNum)-> new UserAddress(
+                        rs.getInt("id"),
+                        rs.getInt("user_id"),
+                        rs.getFloat("longitude"),
+                        rs.getFloat("latitude"),
+                        rs.getString("province"),
+                        rs.getString("city"),
+                        rs.getString("town"),
+                        rs.getString("country"),
+                        rs.getInt("status"),
+                        rs.getTimestamp("created_at"),
+                        rs.getTimestamp("updated_at"),
+                        rs.getInt("choice_status"),
+                        rs.getInt("certify_status")
+                ),
+                locationId
+        );
+
+    }
+    public UserAddress certifyUserAddress(int locationId, int userId){
+        String certifyUserAddressQuery = "update user_location set certify_status=? where id=? && user_id=?";
+        Object[] certifyUserAddressParams = new Object[]{1,locationId,userId};
+        this.jdbcTemplate.update(certifyUserAddressQuery, certifyUserAddressParams);
+
+        UserAddress userAddress=getUserAddress(locationId);
+        return userAddress;
+
+    }
+    public UserAddress createUserAddress(String region1, String region2, String region3, int userId){
+        String createUserAddressQuery = "insert into user_location (user_id, province, city, town) VALUES (?,?,?,?)";
+        Object[] createUserAddressParams = new Object[]{userId,region1,region2,region3};
+        this.jdbcTemplate.update(createUserAddressQuery, createUserAddressParams);
+
+        String lastInsertIdQuery = "select last_insert_id()";
+        int locationId=this.jdbcTemplate.queryForObject(lastInsertIdQuery,int.class);
+
+        UserAddress userAddress=getUserAddress(locationId);
+        return userAddress;
+    }
 
     public UserProfile getUserProfile(int userId){
         String getUserQuery = "select * from user where id = ?";

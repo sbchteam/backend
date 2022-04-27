@@ -59,7 +59,7 @@ public class UserController {
 
     /**
      * 회원 1명 조회 API
-     * [GET] /users/:userIdx
+     * [GET] /users/profile
      * @return BaseResponse<GetUserRes>
      */
     // Path-variable
@@ -75,7 +75,52 @@ public class UserController {
             return new BaseResponse<>((exception.getStatus()));
         }
     }
+    /**
+     * 동/면/읍 검색 api
+     * /users/search */
+    @ResponseBody
+    @GetMapping("/location/search") // (GET) 127.0.0.1:9000/app/users
+    public BaseResponse<AddressSearchList> getAddressSearch(@RequestParam(required = false) String dong) {
+        try {
+            int userId = jwtService.getUserIdx();
+            AddressSearchList add = userService.getAddressSearch(dong,userId);
+            return new BaseResponse<>(add);
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+    /**
+     * 검색한 위치 중 선택 - 위치 등록 api
+     * /users/search/choice
+     * 입력받을 값 - region1, 2, 3, 기본으로 넣어줄 값 - 국가(korea)*/
+    @ResponseBody
+    @GetMapping("/location/choice") // (GET) 127.0.0.1:9000/app/users
+    public BaseResponse<UserAddress> UserAddressEnroll(@RequestParam(required = false) String region1, String region2, String region3) {
+        try {
+            int userId = jwtService.getUserIdx();
+            UserAddress userAddress = userService.UserAddressEnroll(region1,region2,region3,userId);
 
+            return new BaseResponse<>(userAddress);
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+    /**
+     * 좌표로 주소 리턴(위치인증) api
+     * /users/location/certify */
+    /*좌표변경*/
+    @ResponseBody
+    @GetMapping("/location/certify") // (GET) 127.0.0.1:9000/app/users
+    public BaseResponse<UserAddress> UserAddressCertify(@RequestParam(required = false) String longi, String lati,int locationId) {
+        try {
+            int userId = jwtService.getUserIdx();
+            UserAddress userAddress = userService.UserAddressCertify(lati,longi,userId,locationId);
+            return new BaseResponse<>(userAddress);
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        }
+
+    }
     /**
      * 회원가입 API
      * [POST] /users
