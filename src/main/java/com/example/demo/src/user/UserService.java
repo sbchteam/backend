@@ -186,10 +186,14 @@ public class UserService {
             String region2=(String)jsonArray1.get("region_2depth_name");
             String region3=(String)jsonArray1.get("region_3depth_name");
 
-
+            int certifyStatus=0;
             if(region1.equals(userAddress.getProvince()) && region2.equals(userAddress.getCity()) && region3.equals(userAddress.getTown())){
-                userAddress=userDao.certifyUserAddress(userAddress.getId(),userId);
+                certifyStatus=1;
+                userAddress=userDao.certifyUserAddress(userAddress.getId(),userId,certifyStatus);
+            }else{
+                userAddress=userDao.certifyUserAddress(userAddress.getId(),userId,certifyStatus);
             }
+
 
             return userAddress;
         }
