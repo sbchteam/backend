@@ -17,7 +17,7 @@ public class PostList {
     private String transactionStatus;
     private int interestStatus;
     private int interestNum;
-    private Timestamp createdAt;
+    private String createdAt;
     private String imgUrl;
 
 }

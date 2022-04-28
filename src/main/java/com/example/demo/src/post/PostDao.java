@@ -21,17 +21,68 @@ public class PostDao {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
+//                "       max( case\n" +
+//                        "       when pi.user_id =? then pi.status\n" +
+//                        "       when pi.user_id!=? then 0\n" +
+//                        "       when pi.user_id is null then 0\n" +
+//                        "       end ) as interest_status,\n" +
+//                        "       ifnull(interestNum,0) as interest_num,\n" +
+
     public List<PostList> getPosts(int userId) {
         String getPostsQuery =
-                "select *\n" +
-                "from(\n" +
-                "select p.id, title, category, price, transaction_status,\n" +
+                "select plist.id,title,category,price,transaction_status,interest_status,interest_num,plist.created_at,img\n"+
+                "from (\n"+
+                "select p.id, title, category,price, transaction_status,\n" +
                 "       max( case\n" +
                 "       when pi.user_id =? then pi.status\n" +
                 "       when pi.user_id!=? then 0\n" +
                 "       when pi.user_id is null then 0\n" +
-                "       end ) as interestStatus,\n" +
-                "       ifnull(interestNum,0) as interestNum,\n" +
+                "       end ) as interest_status,\n" +
+                "       ifnull(interestNum,0) as interest_num,\n" +
+                "       p.created_at,\n" +
+                "       img \n" +
+                "from post p\n" +
+                "left join post_interest pi\n" +
+                "on p.id = pi.post_id\n" +
+                "join category c\n" +
+                "on c.id = p.category_id\n" +
+                "left join post_image pimg\n" +
+                "on p.id = pimg.post_id\n" +
+                "left join (\n" +
+                "    select post_id, count(*) as interestNum\n" +
+                "    from post_interest\n" +
+                "    group by post_id\n" +
+                ") incnt on p.id=incnt.post_id\n" +
+                "group by p.id ) plist\n"+
+                "order by plist.created_at desc";
+        int getPostsParams = userId;
+        SimpleDateFormat dateFormat= new SimpleDateFormat("yyyy년 MM월 dd일");
+        return this.jdbcTemplate.query(getPostsQuery,
+                (rs, rowNum) -> new PostList(
+                        rs.getInt("id"),
+                        rs.getString("title"),
+                        rs.getString("category"),
+                        rs.getInt("price"),
+                        rs.getString("transaction_status"),
+                        rs.getInt("interest_status"),
+                        rs.getInt("interest_num"),
+                        dateFormat.format(rs.getTimestamp("created_at")),
+                        rs.getString("img")
+                ),
+                getPostsParams, getPostsParams
+        );
+    }
+    public List<PostList> getPostsInterest(int userId) {
+        String getPostsInterestQuery =
+                "select *\n" +
+                "from(\n" +
+                "select p.id, title, category, price, num,transaction_status,\n" +
+                "       max( case\n" +
+                "       when pi.user_id =? then pi.status\n" +
+                "       when pi.user_id!=? then 0\n" +
+                "       when pi.user_id is null then 0\n" +
+                "       end ) as interest_status,\n" +
+                "       ifnull(interestNum,0) as interest_num,\n" +
                 "       p.created_at,\n" +
                 "       img\n" +
                 "from post p\n" +
@@ -46,65 +97,20 @@ public class PostDao {
                 "    from post_interest\n" +
                 "    group by post_id\n" +
                 ") incnt on p.id=incnt.post_id\n" +
-                "group by p.id) plist \n" +
-                "order by plist.created_at desc";
-        int getPostsParams = userId;
-        SimpleDateFormat dateFormat= new SimpleDateFormat("yyyy년 MM월 dd일");
-        //                        dateFormat.format(rs.getTimestamp("p.created_at")),
-        return this.jdbcTemplate.query(getPostsQuery,
-                (rs, rowNum) -> new PostList(
-                        rs.getInt("p.id"),
-                        rs.getString("title"),
-                        rs.getString("category"),
-                        rs.getInt("price"),
-                        rs.getString("transaction_status"),
-                        rs.getInt("interestStatus"),
-                        rs.getInt("interestNum"),
-                        rs.getTimestamp("p.created_at"),
-                        rs.getString("img")
-                ),
-                getPostsParams, getPostsParams
-        );
-    }
-    public List<PostList> getPostsInterest(int userId) {
-        String getPostsInterestQuery =
-                "select *\n" +
-                "from(\n" +
-                "select p.id,title, price, num,transaction_status,p.created_at,\n" +
-                "       category,\n" +
-                "       ifnull(interestNum,0) as interestNum,\n" +
-                "       max( case\n" +
-                "       when pi.user_id =? then pi.status\n" +
-                "       when pi.user_id!=? then 0\n" +
-                "       when pi.user_id is null then 0\n" +
-                "       end ) as interestStatus,\n" +
-                "       img\n" +
-                "from post p\n" +
-                "left join post_interest pi\n" +
-                "on p.id = pi.post_id\n" +
-                "join category c\n" +
-                "on c.id = p.category_id\n" +
-                "left join post_image pimg\n" +
-                "on p.id = pimg.post_id\n" +
-                "left join (\n" +
-                "    select post_id, count(*) as interestNum\n" +
-                "    from post_interest\n" +
-                "    group by post_id\n" +
-                ") incnt on p.id=incnt.post_id\n" +
-                "group by p.id) plist \n" +
-                "order by plist.interestNum desc;";
+                "group by p.id) plist " +
+                "order by plist.interest_num desc";
         int getPostsInterestParams = userId;
+        SimpleDateFormat dateFormat= new SimpleDateFormat("yyyy년 MM월 dd일");
         return this.jdbcTemplate.query(getPostsInterestQuery,
                 (rs, rowNum) -> new PostList(
-                        rs.getInt("p.id"),
+                        rs.getInt("id"),
                         rs.getString("title"),
                         rs.getString("category"),
                         rs.getInt("price"),
                         rs.getString("transaction_status"),
-                        rs.getInt("interestStatus"),
-                        rs.getInt("interestNum"),
-//                        rs.getString("created_at"),
-                        rs.getTimestamp("p.created_at"),
+                        rs.getInt("interest_status"),
+                        rs.getInt("interest_num"),
+                        dateFormat.format(rs.getTimestamp("created_at")),
                         rs.getString("img")
                 ),
                 getPostsInterestParams, getPostsInterestParams
@@ -117,12 +123,12 @@ public class PostDao {
                 "from(\n" +
                 "select p.id,title, price, num,transaction_status,p.created_at,\n" +
                 "       category,\n" +
-                "       ifnull(interestNum,0) as interestNum,\n" +
+                "       ifnull(interestNum,0) as interest_num,\n" +
                 "       max( case\n" +
                 "       when pi.user_id =? then pi.status\n" +
                 "       when pi.user_id!=? then 0\n" +
                 "       when pi.user_id is null then 0\n" +
-                "       end ) as interestStatus,\n" +
+                "       end ) as interest_status,\n" +
                 "       img\n" +
                 "from post p\n" +
                 "left join post_interest pi\n" +
@@ -141,17 +147,17 @@ public class PostDao {
                 "group by p.id) plist\n" +
                 "order by plist.created_at desc;";
         int getPostsOngoingParams = userId;
+        SimpleDateFormat dateFormat= new SimpleDateFormat("yyyy년 MM월 dd일");
         return this.jdbcTemplate.query(getPostsOngoingQuery,
                 (rs, rowNum) -> new PostList(
-                        rs.getInt("p.id"),
+                        rs.getInt("id"),
                         rs.getString("title"),
                         rs.getString("category"),
                         rs.getInt("price"),
                         rs.getString("transaction_status"),
-                        rs.getInt("interestStatus"),
-                        rs.getInt("interestNum"),
-//                        rs.getString("created_at"),
-                        rs.getTimestamp("p.created_at"),
+                        rs.getInt("interest_status"),
+                        rs.getInt("interest_num"),
+                        dateFormat.format(rs.getTimestamp("created_at")),
                         rs.getString("img")
                 ),
                 getPostsOngoingParams, getPostsOngoingParams
