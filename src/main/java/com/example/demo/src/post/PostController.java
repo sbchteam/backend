@@ -37,20 +37,26 @@ public class PostController {
         this.jwtService = jwtService;
     }
 
+
+    /**
+     * 공구 목록 조회 api
+     * interest - 관심 많은 순 조회
+     * ongoing - 거래 완료된 공구를 제외하여 조회
+     * 예외 - 최신순 조회*/
     @ResponseBody
     @GetMapping("")
     public BaseResponse<List<PostList>> getPosts(@RequestParam(required = false) String sort){
         try {
             int userId = jwtService.getUserIdx();
             if (sort.equals("interest")) {
-                List<PostList> onclassList = postProvider.getPostsInterest(userId);
-                return new BaseResponse<>(onclassList);
+                List<PostList> postLists = postProvider.getPostsInterest(userId);
+                return new BaseResponse<>(postLists);
             }else if(sort.equals("ongoing")){
-                List<PostList> onclassList = postProvider.getPostsOngoing(userId);
-                return new BaseResponse<>(onclassList);
+                List<PostList> postLists = postProvider.getPostsOngoing(userId);
+                return new BaseResponse<>(postLists);
             }else{
-                List<PostList> onclassList = postProvider.getPosts(userId);
-                return new BaseResponse<>(onclassList);
+                List<PostList> postLists = postProvider.getPosts(userId);
+                return new BaseResponse<>(postLists);
             }
         } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));
