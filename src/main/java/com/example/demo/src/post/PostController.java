@@ -51,12 +51,14 @@ public class PostController {
         try {
             int userId = jwtService.getUserIdx();
             if (sort.equals("interest")) {
+                System.out.println("관심");
                 List<PostList> postLists = postProvider.getPostsInterest(userId);
                 return new BaseResponse<>(postLists);
             }else if(sort.equals("ongoing")){
                 List<PostList> postLists = postProvider.getPostsOngoing(userId);
                 return new BaseResponse<>(postLists);
             }else{
+                System.out.println("빈칸");
                 List<PostList> postLists = postProvider.getPosts(userId);
                 return new BaseResponse<>(postLists);
             }

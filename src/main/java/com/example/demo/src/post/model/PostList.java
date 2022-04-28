@@ -3,6 +3,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.sql.Time;
 import java.sql.Timestamp;
 
 @Getter
@@ -10,13 +11,13 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 public class PostList {
     private int postId;
-    private int userId;
     private String title;
-    private String Category;
+    private String category;
     private int price;
     private String transactionStatus;
     private int interestStatus;
     private int interestNum;
-    private String CreatedAt;
+    private Timestamp createdAt;
+    private String imgUrl;
 
 }

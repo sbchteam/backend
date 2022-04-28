@@ -8,6 +8,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 @Repository
@@ -24,14 +25,14 @@ public class PostDao {
         String getPostsQuery =
                 "select *\n" +
                 "from(\n" +
-                "select title, price, num,transaction_status,p.created_at,\n" +
-                "       category,\n" +
-                "       ifnull(interestNum,0) as interestNum,\n" +
+                "select p.id, title, category, price, transaction_status,\n" +
                 "       max( case\n" +
                 "       when pi.user_id =? then pi.status\n" +
                 "       when pi.user_id!=? then 0\n" +
                 "       when pi.user_id is null then 0\n" +
                 "       end ) as interestStatus,\n" +
+                "       ifnull(interestNum,0) as interestNum,\n" +
+                "       p.created_at,\n" +
                 "       img\n" +
                 "from post p\n" +
                 "left join post_interest pi\n" +
@@ -46,19 +47,21 @@ public class PostDao {
                 "    group by post_id\n" +
                 ") incnt on p.id=incnt.post_id\n" +
                 "group by p.id) plist \n" +
-                "order by plist.created_at desc;";
+                "order by plist.created_at desc";
         int getPostsParams = userId;
+        SimpleDateFormat dateFormat= new SimpleDateFormat("yyyy년 MM월 dd일");
+        //                        dateFormat.format(rs.getTimestamp("p.created_at")),
         return this.jdbcTemplate.query(getPostsQuery,
                 (rs, rowNum) -> new PostList(
-                        rs.getInt("id"),
-                        rs.getInt("user_id"),
+                        rs.getInt("p.id"),
                         rs.getString("title"),
                         rs.getString("category"),
                         rs.getInt("price"),
                         rs.getString("transaction_status"),
-                        rs.getInt("interest_status"),
-                        rs.getInt("interest_num"),
-                        rs.getString("created_at")
+                        rs.getInt("interestStatus"),
+                        rs.getInt("interestNum"),
+                        rs.getTimestamp("p.created_at"),
+                        rs.getString("img")
                 ),
                 getPostsParams, getPostsParams
         );
@@ -67,7 +70,7 @@ public class PostDao {
         String getPostsInterestQuery =
                 "select *\n" +
                 "from(\n" +
-                "select title, price, num,transaction_status,p.created_at,\n" +
+                "select p.id,title, price, num,transaction_status,p.created_at,\n" +
                 "       category,\n" +
                 "       ifnull(interestNum,0) as interestNum,\n" +
                 "       max( case\n" +
@@ -93,15 +96,16 @@ public class PostDao {
         int getPostsInterestParams = userId;
         return this.jdbcTemplate.query(getPostsInterestQuery,
                 (rs, rowNum) -> new PostList(
-                        rs.getInt("id"),
-                        rs.getInt("user_id"),
+                        rs.getInt("p.id"),
                         rs.getString("title"),
                         rs.getString("category"),
                         rs.getInt("price"),
                         rs.getString("transaction_status"),
-                        rs.getInt("interest_status"),
-                        rs.getInt("interest_num"),
-                        rs.getString("created_at")
+                        rs.getInt("interestStatus"),
+                        rs.getInt("interestNum"),
+//                        rs.getString("created_at"),
+                        rs.getTimestamp("p.created_at"),
+                        rs.getString("img")
                 ),
                 getPostsInterestParams, getPostsInterestParams
         );
@@ -111,7 +115,7 @@ public class PostDao {
         String getPostsOngoingQuery =
                 "select *\n" +
                 "from(\n" +
-                "select title, price, num,transaction_status,p.created_at,\n" +
+                "select p.id,title, price, num,transaction_status,p.created_at,\n" +
                 "       category,\n" +
                 "       ifnull(interestNum,0) as interestNum,\n" +
                 "       max( case\n" +
@@ -139,15 +143,16 @@ public class PostDao {
         int getPostsOngoingParams = userId;
         return this.jdbcTemplate.query(getPostsOngoingQuery,
                 (rs, rowNum) -> new PostList(
-                        rs.getInt("id"),
-                        rs.getInt("user_id"),
+                        rs.getInt("p.id"),
                         rs.getString("title"),
                         rs.getString("category"),
                         rs.getInt("price"),
                         rs.getString("transaction_status"),
-                        rs.getInt("interest_status"),
-                        rs.getInt("interest_num"),
-                        rs.getString("created_at")
+                        rs.getInt("interestStatus"),
+                        rs.getInt("interestNum"),
+//                        rs.getString("created_at"),
+                        rs.getTimestamp("p.created_at"),
+                        rs.getString("img")
                 ),
                 getPostsOngoingParams, getPostsOngoingParams
         );
@@ -169,6 +174,7 @@ public class PostDao {
                 "where p.id=?";
         int getPostParams = postId;
         int getPostParams2 = userId;
+       SimpleDateFormat dateFormat= new SimpleDateFormat("MM월 dd일");
         return this.jdbcTemplate.queryForObject(getWorkQuery,
                 (rs, rowNum) -> new PostDetail(
                         rs.getInt("p.id"),
@@ -183,7 +189,7 @@ public class PostDao {
                         rs.getString("content"),
                         rs.getString("transaction_status"),
                         rs.getInt("interestStatus"),
-                        rs.getString("p.created_at")
+                        dateFormat.format(rs.getTimestamp("p.created_at"))
                 ),
                 getPostParams2, getPostParams);
     }
