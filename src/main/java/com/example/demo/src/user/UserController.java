@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-
 import static com.example.demo.config.BaseResponseStatus.*;
 import static com.example.demo.config.BaseResponseStatus.POST_USERS_ANOTHER_PASSWORD;
 import static com.example.demo.utils.ValidationRegex.isRegexEmail;
