@@ -1,5 +1,6 @@
 package com.example.demo.src.post;
 
+import com.example.demo.src.post.model.PostList;
 import com.example.demo.src.user.UserProvider;
 import com.example.demo.src.user.UserService;
 import org.slf4j.Logger;
@@ -14,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 import static com.example.demo.config.BaseResponseStatus.*;
-import static com.example.demo.config.BaseResponseStatus.POST_USERS_ANOTHER_PASSWORD;
 import static com.example.demo.utils.ValidationRegex.isRegexEmail;
 import static com.example.demo.utils.ValidationRegex.isRegexPassword;
 
@@ -36,5 +36,26 @@ public class PostController {
         this.postService = postService;
         this.jwtService = jwtService;
     }
-    
+
+    @ResponseBody
+    @GetMapping("")
+    public BaseResponse<List<PostList>> getPosts(@RequestParam(required = false) String sort){
+        try {
+            int userId = jwtService.getUserIdx();
+            if (sort.equals("interest")) {
+                List<PostList> onclassList = postProvider.getPostsInterest(userId);
+                return new BaseResponse<>(onclassList);
+            }else if(sort.equals("ongoing")){
+                List<PostList> onclassList = postProvider.getPostsOngoing(userId);
+                return new BaseResponse<>(onclassList);
+            }else{
+                List<PostList> onclassList = postProvider.getPosts(userId);
+                return new BaseResponse<>(onclassList);
+            }
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        }
+
+    }
+
 }
