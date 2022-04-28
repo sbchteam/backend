@@ -1,5 +1,7 @@
 package com.example.demo.src.post;
 
+import com.example.demo.src.post.model.PostDetail;
+import com.example.demo.src.post.model.PostDetailImg;
 import com.example.demo.src.post.model.PostList;
 import com.example.demo.src.user.UserProvider;
 import com.example.demo.src.user.UserService;
@@ -64,4 +66,19 @@ public class PostController {
 
     }
 
+    /**
+     * 공구 상세 페이지(기본화면) api
+     * [Get] /posts/:postId */
+    @ResponseBody
+    @GetMapping("/{postId}") // (GET) 127.0.0.1:9000/app/products/:id 해도 됨...
+    public BaseResponse<PostDetailImg> getPost(@PathVariable("postId") int postId) {
+        // Get Users
+        try{
+            int userIdx = jwtService.getUserIdx();
+            PostDetailImg postDetailImg = postProvider.getPost(postId,userIdx);
+            return new BaseResponse<>(postDetailImg);
+        } catch(BaseException exception){
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
 }
