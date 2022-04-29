@@ -1,6 +1,9 @@
 package com.example.demo.src.post;
 import com.example.demo.config.BaseException;
 import com.example.demo.config.secret.Secret;
+import com.example.demo.src.post.model.Post;
+import com.example.demo.src.post.model.PostDetail;
+import com.example.demo.src.post.model.PostDetailImg;
 import com.example.demo.src.post.model.PostList;
 import com.example.demo.src.user.UserDao;
 import com.example.demo.src.user.model.*;
@@ -53,10 +56,30 @@ public class PostProvider {
 
     public List<PostList> getPosts(int userId) throws BaseException{
         try{
+            System.out.println("빈칸2");
             List<PostList> postLists = postDao.getPosts(userId);
+            System.out.println("빈칸3");
             return postLists;
         }
         catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    public PostDetailImg getPost(int postId, int userId) throws BaseException {
+        try {
+            PostDetail postDetail=postDao.getPost(postId,userId);
+            List<String> imgUrls=postDao.getPostImg(postId);
+
+
+            PostDetailImg postDetailImg=new PostDetailImg();
+
+            postDetailImg.setPostDetail(postDetail);
+            postDetailImg.setImgUrls(imgUrls);
+
+            return postDetailImg;
+
+        } catch (Exception exception) {
             throw new BaseException(DATABASE_ERROR);
         }
     }
