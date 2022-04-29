@@ -67,8 +67,6 @@ public class PostDao {
                 "order by plist.created_at desc;";
 
         int getPostsParams = userId;
-        SimpleDateFormat dateFormat= new SimpleDateFormat("yyyy년 MM월 dd일");
-        //                        dateFormat.format(rs.getTimestamp("created_at")),
         return this.jdbcTemplate.query(getPostsQuery,
                 (rs, rowNum) -> new PostList(
                         rs.getInt("id"),
@@ -117,7 +115,7 @@ public class PostDao {
                 "where p.transaction_status\n" +
                 "not in ('complete')\n" +
                 "group by p.id) plist\n" +
-                "order by plist.created_at ;";
+                "order by plist.created_at desc;";
         int getPostsOngoingParams = userId;
         SimpleDateFormat dateFormat= new SimpleDateFormat("yyyy년 MM월 dd일");
         return this.jdbcTemplate.query(getPostsOngoingQuery,

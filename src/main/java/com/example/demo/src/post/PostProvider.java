@@ -56,9 +56,7 @@ public class PostProvider {
 
     public List<PostList> getPosts(int userId) throws BaseException{
         try{
-            System.out.println("빈칸2");
             List<PostList> postLists = postDao.getPosts(userId);
-            System.out.println("빈칸3");
             return postLists;
         }
         catch (Exception exception) {
