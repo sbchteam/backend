@@ -122,6 +122,23 @@ public class UserController {
 
     }
     /**
+     * 현재위치등록 및 인증까지 api
+     * /users/location/now
+     * 입력받을 값 - 현재 유저의 좌표와 인증할 위치정보id*/
+    @ResponseBody
+    @GetMapping("/location/now") // (GET) 127.0.0.1:9000/app/users
+    public BaseResponse<UserAddress> UserAddressNow(@RequestParam(required = false) String longi, String lati) {
+        try {
+            int userId = jwtService.getUserIdx();
+            UserAddress userAddress = userService.UserAddressNow(lati,longi,userId);
+            return new BaseResponse<>(userAddress);
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        }
+
+    }
+
+    /**
      * 회원가입 API
      * [POST] /users
      * @return BaseResponse<PostUserRes>

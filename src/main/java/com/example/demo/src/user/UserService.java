@@ -147,6 +147,7 @@ public class UserService {
         }
 
     }
+    /*위치 등록*/
     public UserAddress UserAddressEnroll(String region1, String region2, String region3, int userId) throws BaseException {
 
         try {
@@ -156,6 +157,7 @@ public class UserService {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+    /*위치 인증*/
     public UserAddress UserAddressCertify(String lati, String longi,int userId,int locationId){
         UserAddress userAddress=userDao.getUserAddress(locationId);
         try{
@@ -196,6 +198,48 @@ public class UserService {
 
 
             return userAddress;
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            return userAddress;
+        }
+    }
+
+    public UserAddress UserAddressNow(String lati, String longi,int userId){
+        UserAddress userAddress=new UserAddress();
+        try{
+            final String APPKEY="9adca47b25d38d5f1826188403e6caca";
+            final String API_URL="https://dapi.kakao.com/v2/local/geo/coord2address.json?x="+longi+"&y="+lati+"&input_coord=WGS84";
+
+            HttpHeaders headers=new HttpHeaders();
+            headers.add("Authorization","KakaoAK 9adca47b25d38d5f1826188403e6caca");
+
+            MultiValueMap<String,String> parameters=new LinkedMultiValueMap<String,String>();
+            parameters.add("x",longi);
+            parameters.add("y",lati);
+            parameters.add("input_coord","WGS84");
+
+            RestTemplate restTemplate=new RestTemplate();
+            ResponseEntity<String> result=restTemplate.exchange(API_URL,HttpMethod.GET,new HttpEntity<>(headers),String.class);
+
+            JSONParser jsonParser=new JSONParser();
+            JSONObject jsonObject=(JSONObject)jsonParser.parse(result.getBody());
+            JSONArray jsonArray=(JSONArray)jsonObject.get("documents");
+
+            JSONObject local=(JSONObject)jsonArray.get(0);
+            JSONObject jsonArray1=(JSONObject)local.get("address");
+            String localAddress=(String)jsonArray1.get("address_name");
+
+            //userdao에서 region1,2,3가져옴, 여기서 리턴되는 region1,2,3이랑 비교해서 같으면 인증 성공 다르면 인증실패
+            String region1=(String)jsonArray1.get("region_1depth_name");
+            String region2=(String)jsonArray1.get("region_2depth_name");
+            String region3=(String)jsonArray1.get("region_3depth_name");
+
+            userAddress=userDao.createUserAddress(region1,region2,region3,userId);
+            UserAddress userAddress1=userDao.certifyUserAddress(userAddress.getId(),userId,1);
+
+
+            return userAddress1;
         }
         catch (Exception e){
             e.printStackTrace();

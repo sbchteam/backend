@@ -57,31 +57,6 @@ public class PostDao {
             "    group by post_id\n" +
             ") incnt on p.id=incnt.post_id\n";
 
-//       "select plist.id,title,category,price,transaction_status,interest_status,interest_num,plist.created_at,img\n"+
-//               "from (\n"+
-//               "select p.id, title, category,price, transaction_status,\n" +
-//               "       max( case\n" +
-//               "       when pi.user_id =? then pi.status\n" +
-//               "       when pi.user_id!=? then 0\n" +
-//               "       when pi.user_id is null then 0\n" +
-//               "       end ) as interest_status,\n" +
-//               "       ifnull(interestNum,0) as interest_num,\n" +
-//               "       p.created_at,\n" +
-//               "       img \n" +
-//               "from post p\n" +
-//               "left join post_interest pi\n" +
-//               "on p.id = pi.post_id\n" +
-//               "join category c\n" +
-//               "on c.id = p.category_id\n" +
-//               "left join post_image pimg\n" +
-//               "on p.id = pimg.post_id\n" +
-//               "left join (\n" +
-//               "    select post_id, count(*) as interestNum\n" +
-//               "    from post_interest\n" +
-//               "    group by post_id\n" +
-//               ") incnt on p.id=incnt.post_id\n" +
-//               "group by p.id ) plist\n"+
-//               "order by plist.created_at desc";
 
     public List<PostList> getPosts(int userId) {
         String getPostsQuery ="" +
