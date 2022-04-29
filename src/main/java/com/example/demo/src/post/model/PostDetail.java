@@ -21,7 +21,7 @@ public class PostDetail {
     private String category;
     private String title;
     private int price;
-    private String date; //수정할수있음
+    private Timestamp date; //수정할수있음
     private int num;
     private String content;
     private String transactionStatus;

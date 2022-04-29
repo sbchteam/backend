@@ -21,42 +21,79 @@ public class PostDao {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
-//                "       max( case\n" +
-//                        "       when pi.user_id =? then pi.status\n" +
-//                        "       when pi.user_id!=? then 0\n" +
-//                        "       when pi.user_id is null then 0\n" +
-//                        "       end ) as interest_status,\n" +
-//                        "       ifnull(interestNum,0) as interest_num,\n" +
+    String getPostsquery="" +
+            "select p.id, title, category, price, num,transaction_status,p.created_at, \n" +
+            "       max( case\n" +
+            "       when pi.user_id =? then pi.status\n" +
+            "       when pi.user_id!=? then 0\n" +
+            "       when pi.user_id is null then 0\n" +
+            "       end ) as interest_status,\n" +
+            "       ifnull(interestNum,0) as interest_num,\n" +
+            "        case\n" +
+            "           when TIMESTAMPDIFF(hour, p.created_at, current_timestamp()) < 24\n" +
+            "               then case\n" +
+            "                        when TIMESTAMPDIFF(hour, p.created_at, current_timestamp()) < 1\n" +
+            "                            then concat(timestampdiff(minute, p.created_at, current_timestamp()), ' 분전')\n" +
+            "                        when TIMESTAMPDIFF(hour, p.created_at, current_timestamp()) >= 1\n" +
+            "                            then concat(timestampdiff(hour, p.created_at, current_timestamp()), ' 시간전')\n" +
+            "               end\n" +
+            "           when TIMESTAMPDIFF(hour, p.created_at, current_timestamp()) < 48\n" +
+            "               then '어제'\n" +
+            "           when TIMESTAMPDIFF(hour, p.created_at, current_timestamp()) < 72\n" +
+            "               then '그저께'\n" +
+            "           else concat(-datediff(p.created_at, current_timestamp()), ' 일전')\n" +
+            "        end    as timediff,\n" +
+            "       img\n" +
+            "from post p\n" +
+            "left join post_interest pi\n" +
+            "on p.id = pi.post_id\n" +
+            "join category c\n" +
+            "on c.id = p.category_id\n" +
+            "left join post_image pimg\n" +
+            "on p.id = pimg.post_id\n" +
+            "left join (\n" +
+            "    select post_id, count(*) as interestNum\n" +
+            "    from post_interest\n" +
+            "    group by post_id\n" +
+            ") incnt on p.id=incnt.post_id\n";
+
+//       "select plist.id,title,category,price,transaction_status,interest_status,interest_num,plist.created_at,img\n"+
+//               "from (\n"+
+//               "select p.id, title, category,price, transaction_status,\n" +
+//               "       max( case\n" +
+//               "       when pi.user_id =? then pi.status\n" +
+//               "       when pi.user_id!=? then 0\n" +
+//               "       when pi.user_id is null then 0\n" +
+//               "       end ) as interest_status,\n" +
+//               "       ifnull(interestNum,0) as interest_num,\n" +
+//               "       p.created_at,\n" +
+//               "       img \n" +
+//               "from post p\n" +
+//               "left join post_interest pi\n" +
+//               "on p.id = pi.post_id\n" +
+//               "join category c\n" +
+//               "on c.id = p.category_id\n" +
+//               "left join post_image pimg\n" +
+//               "on p.id = pimg.post_id\n" +
+//               "left join (\n" +
+//               "    select post_id, count(*) as interestNum\n" +
+//               "    from post_interest\n" +
+//               "    group by post_id\n" +
+//               ") incnt on p.id=incnt.post_id\n" +
+//               "group by p.id ) plist\n"+
+//               "order by plist.created_at desc";
 
     public List<PostList> getPosts(int userId) {
-        String getPostsQuery =
-                "select plist.id,title,category,price,transaction_status,interest_status,interest_num,plist.created_at,img\n"+
-                "from (\n"+
-                "select p.id, title, category,price, transaction_status,\n" +
-                "       max( case\n" +
-                "       when pi.user_id =? then pi.status\n" +
-                "       when pi.user_id!=? then 0\n" +
-                "       when pi.user_id is null then 0\n" +
-                "       end ) as interest_status,\n" +
-                "       ifnull(interestNum,0) as interest_num,\n" +
-                "       p.created_at,\n" +
-                "       img \n" +
-                "from post p\n" +
-                "left join post_interest pi\n" +
-                "on p.id = pi.post_id\n" +
-                "join category c\n" +
-                "on c.id = p.category_id\n" +
-                "left join post_image pimg\n" +
-                "on p.id = pimg.post_id\n" +
-                "left join (\n" +
-                "    select post_id, count(*) as interestNum\n" +
-                "    from post_interest\n" +
-                "    group by post_id\n" +
-                ") incnt on p.id=incnt.post_id\n" +
-                "group by p.id ) plist\n"+
-                "order by plist.created_at desc";
+        String getPostsQuery ="" +
+                "select *\n" +
+                "from(\n" +
+                getPostsquery+
+                "group by p.id) plist\n" +
+                "order by plist.created_at desc;";
+
         int getPostsParams = userId;
         SimpleDateFormat dateFormat= new SimpleDateFormat("yyyy년 MM월 dd일");
+        //                        dateFormat.format(rs.getTimestamp("created_at")),
         return this.jdbcTemplate.query(getPostsQuery,
                 (rs, rowNum) -> new PostList(
                         rs.getInt("id"),
@@ -66,7 +103,7 @@ public class PostDao {
                         rs.getString("transaction_status"),
                         rs.getInt("interest_status"),
                         rs.getInt("interest_num"),
-                        dateFormat.format(rs.getTimestamp("created_at")),
+                        rs.getString("timediff"),
                         rs.getString("img")
                 ),
                 getPostsParams, getPostsParams
@@ -76,27 +113,7 @@ public class PostDao {
         String getPostsInterestQuery =
                 "select *\n" +
                 "from(\n" +
-                "select p.id, title, category, price, num,transaction_status,\n" +
-                "       max( case\n" +
-                "       when pi.user_id =? then pi.status\n" +
-                "       when pi.user_id!=? then 0\n" +
-                "       when pi.user_id is null then 0\n" +
-                "       end ) as interest_status,\n" +
-                "       ifnull(interestNum,0) as interest_num,\n" +
-                "       p.created_at,\n" +
-                "       img\n" +
-                "from post p\n" +
-                "left join post_interest pi\n" +
-                "on p.id = pi.post_id\n" +
-                "join category c\n" +
-                "on c.id = p.category_id\n" +
-                "left join post_image pimg\n" +
-                "on p.id = pimg.post_id\n" +
-                "left join (\n" +
-                "    select post_id, count(*) as interestNum\n" +
-                "    from post_interest\n" +
-                "    group by post_id\n" +
-                ") incnt on p.id=incnt.post_id\n" +
+                getPostsquery+
                 "group by p.id) plist " +
                 "order by plist.interest_num desc";
         int getPostsInterestParams = userId;
@@ -110,7 +127,7 @@ public class PostDao {
                         rs.getString("transaction_status"),
                         rs.getInt("interest_status"),
                         rs.getInt("interest_num"),
-                        dateFormat.format(rs.getTimestamp("created_at")),
+                        rs.getString("timediff"),
                         rs.getString("img")
                 ),
                 getPostsInterestParams, getPostsInterestParams
@@ -121,31 +138,11 @@ public class PostDao {
         String getPostsOngoingQuery =
                 "select *\n" +
                 "from(\n" +
-                "select p.id,title, price, num,transaction_status,p.created_at,\n" +
-                "       category,\n" +
-                "       ifnull(interestNum,0) as interest_num,\n" +
-                "       max( case\n" +
-                "       when pi.user_id =? then pi.status\n" +
-                "       when pi.user_id!=? then 0\n" +
-                "       when pi.user_id is null then 0\n" +
-                "       end ) as interest_status,\n" +
-                "       img\n" +
-                "from post p\n" +
-                "left join post_interest pi\n" +
-                "on p.id = pi.post_id\n" +
-                "join category c\n" +
-                "on c.id = p.category_id\n" +
-                "left join post_image pimg\n" +
-                "on p.id = pimg.post_id\n" +
-                "left join (\n" +
-                "    select post_id, count(*) as interestNum\n" +
-                "    from post_interest\n" +
-                "    group by post_id\n" +
-                ") incnt on p.id=incnt.post_id\n" +
+                getPostsquery+
                 "where p.transaction_status\n" +
                 "not in ('complete')\n" +
                 "group by p.id) plist\n" +
-                "order by plist.created_at desc;";
+                "order by plist.created_at ;";
         int getPostsOngoingParams = userId;
         SimpleDateFormat dateFormat= new SimpleDateFormat("yyyy년 MM월 dd일");
         return this.jdbcTemplate.query(getPostsOngoingQuery,
@@ -157,7 +154,7 @@ public class PostDao {
                         rs.getString("transaction_status"),
                         rs.getInt("interest_status"),
                         rs.getInt("interest_num"),
-                        dateFormat.format(rs.getTimestamp("created_at")),
+                        rs.getString("timediff"),
                         rs.getString("img")
                 ),
                 getPostsOngoingParams, getPostsOngoingParams
@@ -167,7 +164,21 @@ public class PostDao {
     //date처리, createdAt처리리
    public PostDetail getPost(int postId, int userId) {
         String getWorkQuery =
-                "select p.id,u.profile_img,u.nick,town, category,title,price,date,num,content,transaction_status,ifnull(pi.status,0) as interestStatus,p.created_at\n" +
+                "select p.id,u.profile_img,u.nick,town, category,title,price,date,num,content,transaction_status,ifnull(pi.status,0) as interestStatus,\n" +
+                "       case\n" +
+                "           when TIMESTAMPDIFF(hour, p.created_at, current_timestamp()) < 24\n" +
+                "               then case\n" +
+                "                        when TIMESTAMPDIFF(hour, p.created_at, current_timestamp()) < 1\n" +
+                "                            then concat(timestampdiff(minute, p.created_at, current_timestamp()), ' 분전')\n" +
+                "                        when TIMESTAMPDIFF(hour, p.created_at, current_timestamp()) >= 1\n" +
+                "                            then concat(timestampdiff(hour, p.created_at, current_timestamp()), ' 시간전')\n" +
+                "               end\n" +
+                "           when TIMESTAMPDIFF(hour, p.created_at, current_timestamp()) < 48\n" +
+                "               then '어제'\n" +
+                "           when TIMESTAMPDIFF(hour, p.created_at, current_timestamp()) < 72\n" +
+                "               then '그저께'\n" +
+                "           else concat(-datediff(p.created_at, current_timestamp()), ' 일전')\n" +
+                "        end    as created_at\n" +
                 "from post p\n" +
                 "join user u\n" +
                 "on p.user_id = u.id\n" +
@@ -177,7 +188,7 @@ public class PostDao {
                 "on p.category_id = c.id\n" +
                 "left join post_interest pi\n" +
                 "on p.id = pi.post_id && pi.user_id=?\n" +
-                "where p.id=?";
+                "where p.id=?\n";
         int getPostParams = postId;
         int getPostParams2 = userId;
        SimpleDateFormat dateFormat= new SimpleDateFormat("MM월 dd일");
@@ -190,12 +201,12 @@ public class PostDao {
                         rs.getString("category"),
                         rs.getString("title"),
                         rs.getInt("price"),
-                        rs.getString("date"),
+                        rs.getTimestamp("date"),
                         rs.getInt("num"),
                         rs.getString("content"),
                         rs.getString("transaction_status"),
                         rs.getInt("interestStatus"),
-                        dateFormat.format(rs.getTimestamp("p.created_at"))
+                        rs.getString("created_at")
                 ),
                 getPostParams2, getPostParams);
     }
