@@ -1,6 +1,7 @@
 package com.example.demo.src.post;
 
 import com.example.demo.src.post.model.PostDetail;
+import com.example.demo.src.post.model.PostInterest;
 import com.example.demo.src.post.model.PostList;
 import com.example.demo.src.post.model.PostRecommend;
 import com.example.demo.src.user.model.*;
@@ -237,4 +238,62 @@ public class PostDao {
                         rs.getInt("price")
                 ),keyword,categoryId,getPostId);
     }
+
+    public PostInterest PushPostInterest(int postId, int userId){
+
+        String checkInterestQuery = "" +
+                "select EXISTS(\n" +
+                "select *\n" +
+                "from post_interest pi\n" +
+                "where pi.post_id=? && pi.user_id=?) as exist";
+        Object[] checkInterestParams = new Object[]{postId,userId};
+
+        int result= this.jdbcTemplate.queryForObject(checkInterestQuery,
+                int.class,
+                checkInterestParams);
+
+
+        //존재하면
+        if(result==1){
+            String checkStatusQuery = "" +
+                    "select status\n" +
+                    "from post_interest pi\n" +
+                    "where pi.post_id=? && pi.user_id=?";
+            Object[] checkStatusParams = new Object[]{postId,userId};
+
+            int status= this.jdbcTemplate.queryForObject(checkStatusQuery,
+                    int.class,
+                    checkStatusParams);
+
+            //관심이 눌린 상태면
+            if(status==1){
+                String clearInterestQuery = "update post_interest set status=0 where post_id=? && user_id=?";
+                Object[] clearInterestParams = new Object[]{postId,userId};
+                this.jdbcTemplate.update(clearInterestQuery, clearInterestParams);
+            }else{
+                String createInterestQuery = "update post_interest set status=1 where post_id=? && user_id=?";
+                Object[] createInterestParams = new Object[]{postId,userId};
+                this.jdbcTemplate.update(createInterestQuery, createInterestParams);
+            }
+        }
+        else{
+            String createInterestQuery = "insert into post_interest(post_id,user_id) VALUES (?,?)";
+            Object[] createInterestParams = new Object[]{postId,userId};
+            this.jdbcTemplate.update(createInterestQuery, createInterestParams);
+
+        }
+        String getInterestQuery="" +
+                "select post_id,user_id,status\n" +
+                "from post_interest\n" +
+                "where post_id=? && user_id=?";
+        Object[] getInterestParams = new Object[]{postId,userId};
+        return this.jdbcTemplate.queryForObject(getInterestQuery,
+                (rs, rowNum) -> new PostInterest(
+                        rs.getInt("post_id"),
+                        rs.getInt("user_id"),
+                        rs.getInt("status")
+                ),
+                getInterestParams);
+    }
+
 }
