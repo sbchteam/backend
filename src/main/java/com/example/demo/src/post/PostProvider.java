@@ -78,12 +78,26 @@ public class PostProvider {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+    /**공구 추천하기 */
     public List<PostRecommend> getPostsRecommend(int postId) throws BaseException{
         try{
             List<PostRecommend> postRecommends = postDao.getPostsRecommend(postId);
             return postRecommends;
         }
         catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    /**
+     * 작품에 관심 누르기 API*/
+    public PostInterest PushPostInterest(int postId,int userId) throws BaseException {
+        //중복
+        try{
+            PostInterest interest;
+            interest = postDao.PushPostInterest(postId,userId);
+            return interest;
+        } catch (Exception exception) {
             throw new BaseException(DATABASE_ERROR);
         }
     }

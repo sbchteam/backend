@@ -1,9 +1,6 @@
 package com.example.demo.src.post;
 
-import com.example.demo.src.post.model.PostDetail;
-import com.example.demo.src.post.model.PostDetailImg;
-import com.example.demo.src.post.model.PostList;
-import com.example.demo.src.post.model.PostRecommend;
+import com.example.demo.src.post.model.*;
 import com.example.demo.src.user.UserProvider;
 import com.example.demo.src.user.UserService;
 import org.slf4j.Logger;
@@ -97,4 +94,21 @@ public class PostController {
             return new BaseResponse<>((exception.getStatus()));
         }
     }
+
+    /**
+     * 공구에 관심누르기 API
+     * [POST} */
+    @ResponseBody
+    @GetMapping("/interest/{postId}")
+    public BaseResponse<PostInterest> PushPostInterest(@PathVariable("postId") int postId) {
+
+        try{
+            int userId = jwtService.getUserIdx();
+            PostInterest interest = postProvider.PushPostInterest(postId,userId);
+            return new BaseResponse<>(interest);
+        } catch(BaseException exception){
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+
 }
