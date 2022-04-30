@@ -2,6 +2,7 @@ package com.example.demo.src.post;
 
 import com.example.demo.src.post.model.PostDetail;
 import com.example.demo.src.post.model.PostList;
+import com.example.demo.src.post.model.PostRecommend;
 import com.example.demo.src.user.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -63,6 +64,7 @@ public class PostDao {
                 "select *\n" +
                 "from(\n" +
                 getPostsquery+
+                "where p.status=1 && TIMESTAMPDIFF(minute , now(),p.date)>0 \n"+
                 "group by p.id) plist\n" +
                 "order by plist.created_at desc;";
 
@@ -87,7 +89,8 @@ public class PostDao {
                 "select *\n" +
                 "from(\n" +
                 getPostsquery+
-                "group by p.id) plist " +
+                "where p.status=1 && TIMESTAMPDIFF(minute , now(),p.date)>0 \n"+
+                "group by p.id) plist\n " +
                 "order by plist.interest_num desc";
         int getPostsInterestParams = userId;
         SimpleDateFormat dateFormat= new SimpleDateFormat("yyyy년 MM월 dd일");
@@ -113,7 +116,7 @@ public class PostDao {
                 "from(\n" +
                 getPostsquery+
                 "where p.transaction_status\n" +
-                "not in ('complete')\n" +
+                "not in ('complete') && p.status=1 && TIMESTAMPDIFF(minute , now(),p.date)>0 \n" +
                 "group by p.id) plist\n" +
                 "order by plist.created_at desc;";
         int getPostsOngoingParams = userId;
@@ -195,5 +198,43 @@ public class PostDao {
                         rs.getString("img")
                 ),
                 getPostImgParams);
+    }
+
+    /*작품 추천 api*/
+    public List<PostRecommend> getPostsRecommend(int PostId){
+        String getPostCategory="" +
+                "select category_id\n" +
+                "from post\n" +
+                "where post.id=?";
+        int getPostId=PostId;
+        int categoryId= this.jdbcTemplate.queryForObject(getPostCategory,
+                int.class,
+                getPostId);
+
+        String getPostLocation="" +
+                "select town\n" +
+                "from user_location\n" +
+                "join post p on user_location.id = p.location_id\n" +
+                "where p.id=?;";
+        String town= this.jdbcTemplate.queryForObject(getPostLocation,
+                String.class,
+                getPostId);
+
+        String getPostQuery =
+                "select p.id, title, price,img\n" +
+                "from post p\n" +
+                "join user_location ul on p.location_id = ul.id\n" +
+                "left join post_image pi on p.id = pi.post_id\n" +
+                "where town like ? && p.category_id=? && p.id!=? && p.transaction_status!='complete' && p.status=1 && TIMESTAMPDIFF(minute , now(),p.date)>0\n" +
+                "group by p.id\n" +
+                "limit 3;";
+        String keyword='%'+town+'%';
+        return this.jdbcTemplate.query(getPostQuery,
+                (rs, rowNum) -> new PostRecommend(
+                        rs.getInt("id"),
+                        rs.getString("img"),
+                        rs.getString("title"),
+                        rs.getInt("price")
+                ),keyword,categoryId,getPostId);
     }
 }

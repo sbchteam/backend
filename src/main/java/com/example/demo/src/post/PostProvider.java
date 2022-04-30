@@ -1,10 +1,7 @@
 package com.example.demo.src.post;
 import com.example.demo.config.BaseException;
 import com.example.demo.config.secret.Secret;
-import com.example.demo.src.post.model.Post;
-import com.example.demo.src.post.model.PostDetail;
-import com.example.demo.src.post.model.PostDetailImg;
-import com.example.demo.src.post.model.PostList;
+import com.example.demo.src.post.model.*;
 import com.example.demo.src.user.UserDao;
 import com.example.demo.src.user.model.*;
 import com.example.demo.utils.AES128;
@@ -78,6 +75,15 @@ public class PostProvider {
             return postDetailImg;
 
         } catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+    public List<PostRecommend> getPostsRecommend(int postId) throws BaseException{
+        try{
+            List<PostRecommend> postRecommends = postDao.getPostsRecommend(postId);
+            return postRecommends;
+        }
+        catch (Exception exception) {
             throw new BaseException(DATABASE_ERROR);
         }
     }

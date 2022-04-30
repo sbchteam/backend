@@ -3,6 +3,7 @@ package com.example.demo.src.post;
 import com.example.demo.src.post.model.PostDetail;
 import com.example.demo.src.post.model.PostDetailImg;
 import com.example.demo.src.post.model.PostList;
+import com.example.demo.src.post.model.PostRecommend;
 import com.example.demo.src.user.UserProvider;
 import com.example.demo.src.user.UserService;
 import org.slf4j.Logger;
@@ -77,6 +78,21 @@ public class PostController {
             int userIdx = jwtService.getUserIdx();
             PostDetailImg postDetailImg = postProvider.getPost(postId,userIdx);
             return new BaseResponse<>(postDetailImg);
+        } catch(BaseException exception){
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+
+    /**
+     * 공구 상세페이지 공구 추천(밑) api
+     * [Get] /posts/:postId/recommend */
+    @ResponseBody
+    @GetMapping("/{postId}/recommend") // (GET) 127.0.0.1:9000/app/products/:id 해도 됨...
+    public BaseResponse<List<PostRecommend>> getPostsRecommend(@PathVariable("postId") int postId) {
+        // Get Users
+        try{
+            List<PostRecommend> postRecommends = postProvider.getPostsRecommend(postId);
+            return new BaseResponse<>(postRecommends);
         } catch(BaseException exception){
             return new BaseResponse<>((exception.getStatus()));
         }
