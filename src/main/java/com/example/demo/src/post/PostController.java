@@ -96,8 +96,8 @@ public class PostController {
     }
 
     /**
-     * 공구에 관심누르기 API
-     * [POST} */
+     * 공구에 찜누르기/해제하기 API
+     * [Get] /posts/interest/:postId*/
     @ResponseBody
     @GetMapping("/interest/{postId}")
     public BaseResponse<PostInterest> PushPostInterest(@PathVariable("postId") int postId) {

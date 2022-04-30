@@ -94,9 +94,9 @@ public class PostProvider {
     public PostInterest PushPostInterest(int postId,int userId) throws BaseException {
         //중복
         try{
-            PostInterest interest;
-            interest = postDao.PushPostInterest(postId,userId);
-            return interest;
+            PostInterest postInterest;
+            postInterest = postDao.PushPostInterest(postId,userId);
+            return postInterest;
         } catch (Exception exception) {
             throw new BaseException(DATABASE_ERROR);
         }
