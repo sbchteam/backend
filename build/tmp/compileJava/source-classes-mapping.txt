@@ -46,6 +46,8 @@ com/example/demo/src/post/model/Post.java
  com.example.demo.src.post.model.Post
 com/example/demo/src/user/model/User.java
  com.example.demo.src.user.model.User
+com/example/demo/src/post/model/PostRecommend.java
+ com.example.demo.src.post.model.PostRecommend
 com/example/demo/src/user/UserService.java
  com.example.demo.src.user.UserService
 com/example/demo/src/post/model/PostList.java
