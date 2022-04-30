@@ -64,7 +64,7 @@ public class PostDao {
                 "select *\n" +
                 "from(\n" +
                 getPostsquery+
-                "where p.status=1\n"+
+                "where p.status=1 && TIMESTAMPDIFF(minute , now(),p.date)>0 \n"+
                 "group by p.id) plist\n" +
                 "order by plist.created_at desc;";
 
@@ -89,7 +89,7 @@ public class PostDao {
                 "select *\n" +
                 "from(\n" +
                 getPostsquery+
-                "where p.status=1\n"+
+                "where p.status=1 && TIMESTAMPDIFF(minute , now(),p.date)>0 \n"+
                 "group by p.id) plist\n " +
                 "order by plist.interest_num desc";
         int getPostsInterestParams = userId;
@@ -116,7 +116,7 @@ public class PostDao {
                 "from(\n" +
                 getPostsquery+
                 "where p.transaction_status\n" +
-                "not in ('complete') && p.status=1\n" +
+                "not in ('complete') && p.status=1 && TIMESTAMPDIFF(minute , now(),p.date)>0 \n" +
                 "group by p.id) plist\n" +
                 "order by plist.created_at desc;";
         int getPostsOngoingParams = userId;
@@ -225,7 +225,7 @@ public class PostDao {
                 "from post p\n" +
                 "join user_location ul on p.location_id = ul.id\n" +
                 "left join post_image pi on p.id = pi.post_id\n" +
-                "where town like ? && p.category_id=? && p.id!=? && p.transaction_status!='complete' && p.status=1\n" +
+                "where town like ? && p.category_id=? && p.id!=? && p.transaction_status!='complete' && p.status=1 && TIMESTAMPDIFF(minute , now(),p.date)>0\n" +
                 "group by p.id\n" +
                 "limit 3;";
         String keyword='%'+town+'%';
