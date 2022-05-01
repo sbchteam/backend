@@ -31,6 +31,7 @@ public class PostProvider {
         this.jwtService = jwtService;
     }
 
+    /**공구 목록 조회 API*/
     public List<PostList> getPostsInterest(int userId) throws BaseException{
         try{
             List<PostList> postLists = postDao.getPostsInterest(userId);
@@ -60,7 +61,8 @@ public class PostProvider {
             throw new BaseException(DATABASE_ERROR);
         }
     }
-
+    /**
+     * 공구 상세 페이지 API*/
     public PostDetailImg getPost(int postId, int userId) throws BaseException {
         try {
             PostDetail postDetail=postDao.getPost(postId,userId);
@@ -97,6 +99,17 @@ public class PostProvider {
             PostInterest postInterest;
             postInterest = postDao.PushPostInterest(postId,userId);
             return postInterest;
+        } catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    /**
+     * 거래상황변경 API*/
+    public Post changeTranslate(int postId,int userId,String translateStatus) throws BaseException {
+        try{
+            Post post = postDao.changeTranslate(postId,userId,translateStatus);
+            return post;
         } catch (Exception exception) {
             throw new BaseException(DATABASE_ERROR);
         }

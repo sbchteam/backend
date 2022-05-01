@@ -111,4 +111,25 @@ public class PostController {
         }
     }
 
+    /**
+     * 공구 거래상황변경 api
+     * open - 모집중
+     * deal - 거래중
+     * complete - 거래완료*/
+    @ResponseBody
+    @GetMapping("/{postId}/translate")
+    public BaseResponse<Post> changeTranslate(@PathVariable("postId") int postId, @RequestParam(required = false) String status){
+        try {
+            if(!(status.equals("open")||status.equals("deal")||status.equals("complete"))){ //다른 값 들어오면 에러
+                return new BaseResponse<>(POST_INVALID_TRANSLATE_CHANGE);
+            }
+            int userId = jwtService.getUserIdx();
+            Post post = postProvider.changeTranslate(postId,userId,status);
+            return new BaseResponse<>(post);
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        }
+
+    }
+
 }
