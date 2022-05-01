@@ -1,9 +1,6 @@
 package com.example.demo.src.post;
 
-import com.example.demo.src.post.model.PostDetail;
-import com.example.demo.src.post.model.PostInterest;
-import com.example.demo.src.post.model.PostList;
-import com.example.demo.src.post.model.PostRecommend;
+import com.example.demo.src.post.model.*;
 import com.example.demo.src.user.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -296,4 +293,36 @@ public class PostDao {
                 getInterestParams);
     }
 
+    public Post changeTranslate(int postId,int userId, String translateStatus){
+        String changeTranslateQuery="update post set transaction_status=? where id=? && post.user_id=?";
+        Object[] changeTranslateParams = new Object[]{translateStatus,postId,userId};
+        this.jdbcTemplate.update(changeTranslateQuery, changeTranslateParams);
+        return getPostObject(postId);
+    }
+
+    public Post getPostObject(int postId){
+        String getPostObjectQuery =
+                "select *\n" +
+                "from post\n" +
+                "where id=?";
+        int getPostObjectParams = postId;
+        return this.jdbcTemplate.queryForObject(getPostObjectQuery,
+                (rs, rowNum) -> new Post(
+                        rs.getInt("id"),
+                        rs.getInt("user_id"),
+                        rs.getString("title"),
+                        rs.getInt("category_id"),
+                        rs.getString("product_name"),
+                        rs.getInt("price"),
+                        rs.getInt("location_id"),
+                        rs.getTimestamp("date"),
+                        rs.getInt("num"),
+                        rs.getString("content"),
+                        rs.getString("transaction_status"),
+                        rs.getInt("status"),
+                        rs.getTimestamp("created_at"),
+                        rs.getTimestamp("updated_at")
+                ),
+                getPostObjectParams);
+    }
 }

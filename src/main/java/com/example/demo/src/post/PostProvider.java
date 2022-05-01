@@ -101,4 +101,15 @@ public class PostProvider {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+
+    /**
+     * 거래상황변경 API*/
+    public Post changeTranslate(int postId,int userId,String translateStatus) throws BaseException {
+        try{
+            Post post = postDao.changeTranslate(postId,userId,translateStatus);
+            return post;
+        } catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
 }
