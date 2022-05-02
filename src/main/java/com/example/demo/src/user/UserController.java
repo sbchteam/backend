@@ -79,7 +79,7 @@ public class UserController {
     /**
      * 유저가 주최한 공구 조회 API
      *  userId에 0을 넣으면 본인 프로필임
-     * [GET] /users/profile
+     * [GET] /users/host/:userId
      */
     // Path-variable
     @ResponseBody
@@ -100,7 +100,7 @@ public class UserController {
     /**
      * 유저가 받은 후기 조회 API
      *  userId에 0을 넣으면 본인 프로필임
-     * [GET] /users/profile
+     * [GET] /users/review/:userId
      */
     // Path-variable
     @ResponseBody

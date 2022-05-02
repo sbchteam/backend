@@ -9,6 +9,7 @@ import java.sql.Timestamp;
 @Setter
 @AllArgsConstructor
 public class UserReviews {
+    private int userId;
     private String profileImg;
     private String content;
     private String nick;

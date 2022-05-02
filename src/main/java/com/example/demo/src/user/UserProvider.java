@@ -42,7 +42,7 @@ public class UserProvider {
     }
 
 
-
+    /*프로필 조회*/
     public UserProfile getUserProfile(int userId) throws BaseException {
         if(userId==0){
             throw new BaseException(EMPTY_JWT);
@@ -54,6 +54,8 @@ public class UserProvider {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+
+    /*주최한 공구 조회*/
     public List<UserPosts> getUserHost(int userId) throws BaseException {
         if(userId==0){
             throw new BaseException(EMPTY_JWT);
@@ -65,6 +67,7 @@ public class UserProvider {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+    /*받은 후기 조회*/
     public List<UserReviews> getUserReview(int userId) throws BaseException {
         if(userId==0){
             throw new BaseException(EMPTY_JWT);
