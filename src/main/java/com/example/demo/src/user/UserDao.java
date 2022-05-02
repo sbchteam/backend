@@ -7,6 +7,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 @Repository
@@ -116,8 +117,31 @@ public class UserDao {
                         rs.getString("profile_img")),
                 getUserParams);
     }
-    
 
+    public List<UserPosts> getUserHost(int userId){
+        String getUsersQuery = "";
+        SimpleDateFormat dateFormat= new SimpleDateFormat("yyyy년 MM월 dd일");
+        return this.jdbcTemplate.query(getUsersQuery,
+                (rs,rowNum) -> new UserPosts(
+                        rs.getInt("id"),
+                        rs.getString("category"),
+                        rs.getString("title"),
+                        rs.getInt("price"),
+                        dateFormat.format(rs.getTimestamp("created_at")),
+                        rs.getString("img"))
+        );
+    }
+
+    public List<UserReviews> getUserReview(int userId){
+        String getUsersQuery = "";
+        return this.jdbcTemplate.query(getUsersQuery,
+                (rs,rowNum) -> new UserReviews(
+                        rs.getString("profile_img"),
+                        rs.getString("content"),
+                        rs.getString("nick")
+                     )
+        );
+    }
     public PostUserRes createUser(PostUserReq postUserReq){
         if(postUserReq.getSocial()==null) {
             String createUserQuery = "insert into user (email, name, phone, password, nick) VALUES (?,?,?,?,?)";

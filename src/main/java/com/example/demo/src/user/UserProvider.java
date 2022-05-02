@@ -54,6 +54,28 @@ public class UserProvider {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+    public List<UserPosts> getUserHost(int userId) throws BaseException {
+        if(userId==0){
+            throw new BaseException(EMPTY_JWT);
+        }
+        try {
+            List<UserPosts> userPosts = userDao.getUserHost(userId);
+            return userPosts;
+        } catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+    public List<UserReviews> getUserReview(int userId) throws BaseException {
+        if(userId==0){
+            throw new BaseException(EMPTY_JWT);
+        }
+        try {
+            List<UserReviews> userReviews = userDao.getUserReview(userId);
+            return userReviews;
+        } catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
 
     public int checkEmail(String email) throws BaseException{
         try{
