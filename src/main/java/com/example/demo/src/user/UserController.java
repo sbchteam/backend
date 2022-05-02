@@ -57,23 +57,27 @@ public class UserController {
     }
 
     /**
-     * 회원 1명 조회 API
+     * 내 프로필 조회 API
      * [GET] /users/profile
      * @return BaseResponse<GetUserRes>
      */
     // Path-variable
     @ResponseBody
-    @GetMapping("/profile") // (GET) 127.0.0.1:9000/app/users/:userIdx
-    public BaseResponse<UserProfile> getUserProfile() {
+    @GetMapping("/profile/{userId}") // (GET) 127.0.0.1:9000/app/users/:userIdx
+    public BaseResponse<UserProfile> getUserProfile(@PathVariable(value = "userId") int userId) {
         // Get Users
         try{
-            int userId = jwtService.getUserIdx();
+            if(userId==0){
+                userId = jwtService.getUserIdx();
+            }
             UserProfile userProfile = userProvider.getUserProfile(userId);
             return new BaseResponse<>(userProfile);
         } catch(BaseException exception){
             return new BaseResponse<>((exception.getStatus()));
         }
     }
+
+
     /**
      * 동/면/읍 검색 api
      * /users/search

@@ -15,6 +15,7 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PostDetail {
     private int postId;
+    private int userId;
     private String profileImg;
     private String nick;
     private String town;

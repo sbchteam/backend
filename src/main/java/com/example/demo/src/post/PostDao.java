@@ -138,7 +138,7 @@ public class PostDao {
     //date처리, createdAt처리리
    public PostDetail getPost(int postId, int userId) {
         String getWorkQuery =
-                "select p.id,u.profile_img,u.nick,town, category,title,price,date,num,content,transaction_status,ifnull(pi.status,0) as interestStatus,\n" +
+                "select p.id,p.user_id,u.profile_img,u.nick,town, category,title,price,date,num,content,transaction_status,ifnull(pi.status,0) as interestStatus,\n" +
                 "       case\n" +
                 "           when TIMESTAMPDIFF(hour, p.created_at, current_timestamp()) < 24\n" +
                 "               then case\n" +
@@ -169,6 +169,7 @@ public class PostDao {
         return this.jdbcTemplate.queryForObject(getWorkQuery,
                 (rs, rowNum) -> new PostDetail(
                         rs.getInt("p.id"),
+                        rs.getInt("p.user_id"),
                         rs.getString("profile_img"),
                         rs.getString("nick"),
                         rs.getString("town"),

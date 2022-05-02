@@ -15,6 +15,7 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PostDetailImg {
     private int postId;
+    private int userId;
     private String profileImg;
     private String nick;
     private String town;
@@ -32,6 +33,7 @@ public class PostDetailImg {
 
     public void setPostDetail(PostDetail postDetail){
         this.setPostId(postDetail.getPostId());
+        this.setUserId(postDetail.getUserId());
         this.setProfileImg(postDetail.getProfileImg());
         this.setNick(postDetail.getNick());
         this.setTown(postDetail.getTown());

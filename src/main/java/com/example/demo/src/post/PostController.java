@@ -100,7 +100,7 @@ public class PostController {
      * [Get] /posts/interest/:postId*/
     @ResponseBody
     @GetMapping("/interest/{postId}")
-    public BaseResponse<PostInterest> PushPostInterest(@PathVariable("postId") int postId) {
+    public BaseResponse<PostInterest> PushPostInterest(@PathVariable(value = "postId") int postId) {
 
         try{
             int userId = jwtService.getUserIdx();
