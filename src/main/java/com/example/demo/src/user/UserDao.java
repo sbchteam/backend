@@ -7,6 +7,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 @Repository
@@ -60,6 +61,57 @@ public class UserDao {
         );
 
     }
+    /*프로필 조회*/
+    public UserProfile getUserProfile(int userId){
+        String getUserQuery = "select * from user where id = ?";
+        int getUserParams = userId;
+        return this.jdbcTemplate.queryForObject(getUserQuery,
+                (rs, rowNum) -> new UserProfile(
+                        rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getString("nick"),
+                        rs.getString("phone"),
+                        rs.getString("profile_img")),
+                getUserParams);
+    }
+    /*주최한 공구 조회*/
+    public List<UserPosts> getUserHost(int userId){
+        String getUsersQuery = "" +
+                "select post.id,title,category, price, post.created_at,img\n" +
+                "from post\n" +
+                "join category c on post.category_id = c.id\n" +
+                "left join post_image pi on post.id = pi.post_id\n" +
+                "where user_id=?\n" +
+                "group by post.id;";
+        SimpleDateFormat dateFormat= new SimpleDateFormat("yyyy년 MM월 dd일");
+        return this.jdbcTemplate.query(getUsersQuery,
+                (rs,rowNum) -> new UserPosts(
+                        rs.getInt("post.id"),
+                        rs.getString("category"),
+                        rs.getString("title"),
+                        rs.getInt("price"),
+                        dateFormat.format(rs.getTimestamp("post.created_at")),
+                        rs.getString("img")
+                ),userId
+        );
+    }
+    /*받은 후기 조회*/
+    public List<UserReviews> getUserReview(int userId){
+        String getUsersQuery = "" +
+                "select u.id,profile_img,nick,content\n" +
+                "from user_credibility uc\n" +
+                "join user u on uc.evaluator_id = u.id\n" +
+                "where uc.user_id=?";
+        return this.jdbcTemplate.query(getUsersQuery,
+                (rs,rowNum) -> new UserReviews(
+                        rs.getInt("u.id"),
+                        rs.getString("profile_img"),
+                        rs.getString("content"),
+                        rs.getString("nick")
+                ),userId
+        );
+    }
+
     public UserAddress getUserAddress(int locationId){
         String getUserAddressQuery = "select * from user_location where id = ?";
 
@@ -104,19 +156,6 @@ public class UserDao {
         return userAddress;
     }
 
-    public UserProfile getUserProfile(int userId){
-        String getUserQuery = "select * from user where id = ?";
-        int getUserParams = userId;
-        return this.jdbcTemplate.queryForObject(getUserQuery,
-                (rs, rowNum) -> new UserProfile(
-                        rs.getInt("id"),
-                        rs.getString("name"),
-                        rs.getString("nick"),
-                        rs.getString("phone"),
-                        rs.getString("profile_img")),
-                getUserParams);
-    }
-    
 
     public PostUserRes createUser(PostUserReq postUserReq){
         if(postUserReq.getSocial()==null) {

@@ -1,3 +1,5 @@
+com/example/demo/src/user/model/UserPosts.java
+ com.example.demo.src.user.model.UserPosts
 com/example/demo/src/post/model/PostDetailImg.java
  com.example.demo.src.post.model.PostDetailImg
 com/example/demo/src/post/PostController.java
@@ -52,6 +54,8 @@ com/example/demo/src/post/model/PostRecommend.java
  com.example.demo.src.post.model.PostRecommend
 com/example/demo/src/user/UserService.java
  com.example.demo.src.user.UserService
+com/example/demo/src/user/model/UserReviews.java
+ com.example.demo.src.user.model.UserReviews
 com/example/demo/src/post/model/PostList.java
  com.example.demo.src.post.model.PostList
 com/example/demo/src/user/model/AddressSearchList.java

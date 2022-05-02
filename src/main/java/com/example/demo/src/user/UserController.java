@@ -57,23 +57,68 @@ public class UserController {
     }
 
     /**
-     * 회원 1명 조회 API
+     * 유저 프로필 조회 API
+     * userId에 0을 넣으면 본인 프로필임
      * [GET] /users/profile
-     * @return BaseResponse<GetUserRes>
      */
     // Path-variable
     @ResponseBody
-    @GetMapping("/profile") // (GET) 127.0.0.1:9000/app/users/:userIdx
-    public BaseResponse<UserProfile> getUserProfile() {
+    @GetMapping("/profile/{userId}") // (GET) 127.0.0.1:9000/app/users/:userIdx
+    public BaseResponse<UserProfile> getUserProfile(@PathVariable(value = "userId") int userId) {
         // Get Users
         try{
-            int userId = jwtService.getUserIdx();
+            if(userId==0){
+                userId = jwtService.getUserIdx();
+            }
             UserProfile userProfile = userProvider.getUserProfile(userId);
             return new BaseResponse<>(userProfile);
         } catch(BaseException exception){
             return new BaseResponse<>((exception.getStatus()));
         }
     }
+    /**
+     * 유저가 주최한 공구 조회 API
+     *  userId에 0을 넣으면 본인 프로필임
+     * [GET] /users/host/:userId
+     */
+    // Path-variable
+    @ResponseBody
+    @GetMapping("/host/{userId}") // (GET) 127.0.0.1:9000/app/users/:userIdx
+    public BaseResponse<List<UserPosts>> getUserHost(@PathVariable(value = "userId") int userId) {
+        // Get Users
+        try{
+            if(userId==0){
+                userId = jwtService.getUserIdx();
+            }
+            List<UserPosts> userPosts = userProvider.getUserHost(userId);
+            return new BaseResponse<>(userPosts);
+        } catch(BaseException exception){
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+
+    /**
+     * 유저가 받은 후기 조회 API
+     *  userId에 0을 넣으면 본인 프로필임
+     * [GET] /users/review/:userId
+     */
+    // Path-variable
+    @ResponseBody
+    @GetMapping("/review/{userId}") // (GET) 127.0.0.1:9000/app/users/:userIdx
+    public BaseResponse<List<UserReviews>> getUserReview(@PathVariable(value = "userId") int userId) {
+        // Get Users
+        try{
+            if(userId==0){
+                userId = jwtService.getUserIdx();
+            }
+            List<UserReviews> userReviews = userProvider.getUserReview(userId);
+            return new BaseResponse<>(userReviews);
+        } catch(BaseException exception){
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+
+
     /**
      * 동/면/읍 검색 api
      * /users/search

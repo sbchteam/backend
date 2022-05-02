@@ -42,7 +42,7 @@ public class UserProvider {
     }
 
 
-
+    /*프로필 조회*/
     public UserProfile getUserProfile(int userId) throws BaseException {
         if(userId==0){
             throw new BaseException(EMPTY_JWT);
@@ -50,6 +50,31 @@ public class UserProvider {
         try {
             UserProfile userProfile = userDao.getUserProfile(userId);
             return userProfile;
+        } catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    /*주최한 공구 조회*/
+    public List<UserPosts> getUserHost(int userId) throws BaseException {
+        if(userId==0){
+            throw new BaseException(EMPTY_JWT);
+        }
+        try {
+            List<UserPosts> userPosts = userDao.getUserHost(userId);
+            return userPosts;
+        } catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+    /*받은 후기 조회*/
+    public List<UserReviews> getUserReview(int userId) throws BaseException {
+        if(userId==0){
+            throw new BaseException(EMPTY_JWT);
+        }
+        try {
+            List<UserReviews> userReviews = userDao.getUserReview(userId);
+            return userReviews;
         } catch (Exception exception) {
             throw new BaseException(DATABASE_ERROR);
         }
