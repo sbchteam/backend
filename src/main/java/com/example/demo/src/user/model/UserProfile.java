@@ -13,6 +13,7 @@ public class UserProfile {
     private String nick;
     private String phone;
     private String profileImg;
+    private float credibilityScore;
 
     public void setNullProfile(UserProfile userProfile){
         if(this.getName()==null){
@@ -26,6 +27,9 @@ public class UserProfile {
         }
         if(this.getProfileImg()==null){
             this.setProfileImg(userProfile.getProfileImg());
+        }
+        if(this.getCredibilityScore()==0){
+            this.setCredibilityScore(userProfile.getCredibilityScore());
         }
     }
 }
