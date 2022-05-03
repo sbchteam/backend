@@ -276,5 +276,22 @@ public class UserController {
             }
         }
 
+    /**
+     * 유저신용도평가 & 후기작성 API
+     * [POST] /users/evaluation
+     * @return BaseResponse<String>
+     */
+    @ResponseBody
+    @PostMapping("evaluation")
+    public BaseResponse<UserEvaluation> setUserEvaluation(@RequestBody UserEvaluation userEvaluation){
+        try {
+            int userId = jwtService.getUserIdx();
+            UserEvaluation userEvaluationRes=userService.setUserEvaluation(userEvaluation,userId);
+
+            return new BaseResponse<>(userEvaluationRes);
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
 
 }

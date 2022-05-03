@@ -49,6 +49,18 @@ public class UserService {
     }
 
     //POST
+    /*신뢰도+평가 api*/
+    public UserEvaluation setUserEvaluation(UserEvaluation userEvaluation,int userId) throws BaseException {
+        try{
+            /*validation처리 해야됨. 채팅 한적 있는 사람만 dao에 검사하는 메소드 두고 검사해서 1나오면 가능하게하고 0이면 불가능하게 하면될듯*/
+            UserEvaluation userEvaluationRes = userDao.setUserEvaluation(userEvaluation,userId);
+            return userEvaluationRes;
+        } catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    /*회원가입*/
     public PostUserRes createUser(PostUserReq postUserReq) throws BaseException {
         //중복
         if(userProvider.checkEmail(postUserReq.getEmail()) ==1){

@@ -70,3 +70,5 @@ com/example/demo/src/user/model/AddressInfo.java
  com.example.demo.src.user.model.AddressInfo
 com/example/demo/src/user/UserProvider.java
  com.example.demo.src.user.UserProvider
+com/example/demo/src/user/model/UserEvaluation.java
+ com.example.demo.src.user.model.UserEvaluation

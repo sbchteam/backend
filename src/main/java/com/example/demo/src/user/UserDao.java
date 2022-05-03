@@ -197,6 +197,26 @@ public class UserDao {
         return this.jdbcTemplate.update(modifyUserProfileQuery,modifyUserProfileParams);
     }
 
+    /*신뢰도, 후기 평가*/
+    public UserEvaluation setUserEvaluation(UserEvaluation userEvaluation, int userId){
+
+        String setUserEvaluationQuery = "insert into user_credibility(user_id,evaluator_id,score, content) VALUES (?,?,?,?)";
+        Object[] setUserEvaluationParams = new Object[]{userEvaluation.getUserId(),userId,userEvaluation.getScore(),userEvaluation.getContent()};
+        this.jdbcTemplate.update(setUserEvaluationQuery, setUserEvaluationParams);
+
+        String lastInsertIdQuery = "select last_insert_id()";
+        int credibilityId=this.jdbcTemplate.queryForObject(lastInsertIdQuery,int.class);
+        String getCredibilityQuery="select user_id, score, content from user_credibility where id=?";
+
+        return this.jdbcTemplate.queryForObject(getCredibilityQuery,
+                (rs, rowNum) -> new UserEvaluation(
+                        rs.getInt("user_id"),
+                        rs.getFloat("score"),
+                        rs.getString("content")
+                ),
+                credibilityId);
+    }
+    /*신뢰도평가,후기작성 전 채팅한적 있는 유저인지 검사*/
 
 
 
