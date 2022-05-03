@@ -294,11 +294,11 @@ public class PostDao {
                 getInterestParams);
     }
 
-    public Post changeTranslate(int postId,int userId, String translateStatus){
+    public PostDetail changeTranslate(int postId,int userId, String translateStatus){
         String changeTranslateQuery="update post set transaction_status=? where id=? && post.user_id=?";
         Object[] changeTranslateParams = new Object[]{translateStatus,postId,userId};
         this.jdbcTemplate.update(changeTranslateQuery, changeTranslateParams);
-        return getPostObject(postId);
+        return getPost(postId,userId);
     }
 
     public Post getPostObject(int postId){

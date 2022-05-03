@@ -118,14 +118,14 @@ public class PostController {
      * complete - 거래완료*/
     @ResponseBody
     @GetMapping("/{postId}/translate")
-    public BaseResponse<Post> changeTranslate(@PathVariable("postId") int postId, @RequestParam(required = false) String status){
+    public BaseResponse<PostDetailImg> changeTranslate(@PathVariable("postId") int postId, @RequestParam(required = false) String status){
         try {
             if(!(status.equals("open")||status.equals("deal")||status.equals("complete"))){ //다른 값 들어오면 에러
                 return new BaseResponse<>(POST_INVALID_TRANSLATE_CHANGE);
             }
             int userId = jwtService.getUserIdx();
-            Post post = postProvider.changeTranslate(postId,userId,status);
-            return new BaseResponse<>(post);
+            PostDetailImg postDetailImg = postProvider.changeTranslate(postId,userId,status);
+            return new BaseResponse<>(postDetailImg);
         } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));
         }

@@ -106,10 +106,16 @@ public class PostProvider {
 
     /**
      * 거래상황변경 API*/
-    public Post changeTranslate(int postId,int userId,String translateStatus) throws BaseException {
+    public PostDetailImg changeTranslate(int postId,int userId,String translateStatus) throws BaseException {
         try{
-            Post post = postDao.changeTranslate(postId,userId,translateStatus);
-            return post;
+            PostDetail postDetail = postDao.changeTranslate(postId,userId,translateStatus);
+            List<String> imgUrls=postDao.getPostImg(postId);
+
+            PostDetailImg postDetailImg=new PostDetailImg();
+
+            postDetailImg.setPostDetail(postDetail);
+            postDetailImg.setImgUrls(imgUrls);
+            return postDetailImg;
         } catch (Exception exception) {
             throw new BaseException(DATABASE_ERROR);
         }

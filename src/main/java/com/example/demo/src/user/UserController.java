@@ -283,12 +283,11 @@ public class UserController {
      */
     @ResponseBody
     @PostMapping("evaluation")
-    public BaseResponse<UserEvaluation> setUserEvaluation(@RequestBody UserEvaluation userEvaluation){
+    public BaseResponse<UserProfile> setUserEvaluation(@RequestBody UserEvaluation userEvaluation){
         try {
             int userId = jwtService.getUserIdx();
-            UserEvaluation userEvaluationRes=userService.setUserEvaluation(userEvaluation,userId);
-
-            return new BaseResponse<>(userEvaluationRes);
+            UserProfile userProfile=userService.setUserEvaluation(userEvaluation,userId);
+            return new BaseResponse<>(userProfile);
         } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));
         }
