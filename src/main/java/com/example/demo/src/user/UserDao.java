@@ -63,15 +63,22 @@ public class UserDao {
     }
     /*프로필 조회*/
     public UserProfile getUserProfile(int userId){
-        String getUserQuery = "select * from user where id = ?";
+        String getUserQuery = "" +
+                "select u.id,nick,name,phone,profile_img,avg(uc.score) as credibility_score\n" +
+                "from user u\n" +
+                "join user_credibility uc on u.id = uc.user_id\n" +
+                "where u.id=?\n" +
+                "group by u.id";
         int getUserParams = userId;
         return this.jdbcTemplate.queryForObject(getUserQuery,
                 (rs, rowNum) -> new UserProfile(
-                        rs.getInt("id"),
+                        rs.getInt("u.id"),
                         rs.getString("name"),
                         rs.getString("nick"),
                         rs.getString("phone"),
-                        rs.getString("profile_img")),
+                        rs.getString("profile_img"),
+                        rs.getFloat("credibility_score")
+                ),
                 getUserParams);
     }
     /*주최한 공구 조회*/
@@ -197,6 +204,26 @@ public class UserDao {
         return this.jdbcTemplate.update(modifyUserProfileQuery,modifyUserProfileParams);
     }
 
+    /*신뢰도, 후기 평가*/
+    public UserEvaluation setUserEvaluation(UserEvaluation userEvaluation, int userId){
+
+        String setUserEvaluationQuery = "insert into user_credibility(user_id,evaluator_id,score, content) VALUES (?,?,?,?)";
+        Object[] setUserEvaluationParams = new Object[]{userEvaluation.getUserId(),userId,userEvaluation.getScore(),userEvaluation.getContent()};
+        this.jdbcTemplate.update(setUserEvaluationQuery, setUserEvaluationParams);
+
+        String lastInsertIdQuery = "select last_insert_id()";
+        int credibilityId=this.jdbcTemplate.queryForObject(lastInsertIdQuery,int.class);
+        String getCredibilityQuery="select user_id, score, content from user_credibility where id=?";
+
+        return this.jdbcTemplate.queryForObject(getCredibilityQuery,
+                (rs, rowNum) -> new UserEvaluation(
+                        rs.getInt("user_id"),
+                        rs.getFloat("score"),
+                        rs.getString("content")
+                ),
+                credibilityId);
+    }
+    /*신뢰도평가,후기작성 전 채팅한적 있는 유저인지 검사*/
 
 
 
