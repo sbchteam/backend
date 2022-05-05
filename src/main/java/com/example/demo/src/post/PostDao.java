@@ -62,7 +62,11 @@ public class PostDao {
                 "select *\n" +
                 "from(\n" +
                 getPostsquery+
-                "where p.status=1 && TIMESTAMPDIFF(minute , now(),p.date)>0 \n"+
+                "where p.status=1 && TIMESTAMPDIFF(minute , now(),p.date)>0 && p.user_id not in (\n" +
+                "    select user_id\n" +
+                "    from user_block\n" +
+                "    where blocker_id=?\n" +
+                ")\n"+
                 "group by p.id) plist\n" +
                 "order by plist.created_at desc;";
 
@@ -79,7 +83,7 @@ public class PostDao {
                         rs.getString("timediff"),
                         rs.getString("img")
                 ),
-                getPostsParams, getPostsParams
+                getPostsParams, getPostsParams,getPostsParams
         );
     }
     public List<PostList> getPostsInterest(int userId) {
@@ -87,7 +91,11 @@ public class PostDao {
                 "select *\n" +
                 "from(\n" +
                 getPostsquery+
-                "where p.status=1 && TIMESTAMPDIFF(minute , now(),p.date)>0 \n"+
+                "where p.status=1 && TIMESTAMPDIFF(minute , now(),p.date)>0 && p.user_id not in (\n" +
+                "    select user_id\n" +
+                "    from user_block\n" +
+                "    where blocker_id=?\n" +
+                ")\n"+
                 "group by p.id) plist\n " +
                 "order by plist.interest_num desc";
         int getPostsInterestParams = userId;
@@ -104,7 +112,7 @@ public class PostDao {
                         rs.getString("timediff"),
                         rs.getString("img")
                 ),
-                getPostsInterestParams, getPostsInterestParams
+                getPostsInterestParams, getPostsInterestParams,getPostsInterestParams
         );
     }
 
@@ -114,7 +122,11 @@ public class PostDao {
                 "from(\n" +
                 getPostsquery+
                 "where p.transaction_status\n" +
-                "not in ('complete') && p.status=1 && TIMESTAMPDIFF(minute , now(),p.date)>0 \n" +
+                "not in ('complete') && p.status=1 && TIMESTAMPDIFF(minute , now(),p.date)>0 && p.user_id not in (\n" +
+                "    select user_id\n" +
+                "    from user_block\n" +
+                "    where blocker_id=?\n" +
+                ")\n" +
                 "group by p.id) plist\n" +
                 "order by plist.created_at desc;";
         int getPostsOngoingParams = userId;
@@ -131,7 +143,7 @@ public class PostDao {
                         rs.getString("timediff"),
                         rs.getString("img")
                 ),
-                getPostsOngoingParams, getPostsOngoingParams
+                getPostsOngoingParams, getPostsOngoingParams,getPostsOngoingParams
         );
     }
 

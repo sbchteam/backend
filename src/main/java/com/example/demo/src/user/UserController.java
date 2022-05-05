@@ -299,7 +299,7 @@ public class UserController {
      * @return BaseResponse<String>
      */
     @ResponseBody
-    @PostMapping("block/{userId}")
+    @GetMapping("block/{userId}")
     public BaseResponse<UserBlock> UserBlock(@PathVariable(value = "userId") int blockUserId){
         try {
             int userId = jwtService.getUserIdx();
