@@ -259,7 +259,7 @@ public class UserController {
 
     /**
      * 유저정보변경 API
-     * [PATCH] /users/:userIdx
+     * [PATCH] /users
      * @return BaseResponse<String>
      */
         @ResponseBody
@@ -288,6 +288,23 @@ public class UserController {
             int userId = jwtService.getUserIdx();
             UserProfile userProfile=userService.setUserEvaluation(userEvaluation,userId);
             return new BaseResponse<>(userProfile);
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+
+    /**
+     * 유저신용도평가 & 후기작성 API
+     * [POST] /users/evaluation
+     * @return BaseResponse<String>
+     */
+    @ResponseBody
+    @PostMapping("block/{userId}")
+    public BaseResponse<UserBlock> UserBlock(@PathVariable(value = "userId") int blockUserId){
+        try {
+            int userId = jwtService.getUserIdx();
+            UserBlock userBlock=userProvider.UserBlock(blockUserId,userId);
+            return new BaseResponse<>(userBlock);
         } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));
         }

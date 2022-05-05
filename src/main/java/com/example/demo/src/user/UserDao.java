@@ -215,6 +215,23 @@ public class UserDao {
     /*신뢰도평가,후기작성 전 채팅한적 있는 유저인지 검사*/
 
 
+    /*유저 차단하기*/
+    public UserBlock UserBlock(int blockUserId,int userId){
 
+        String setUserBlockQuery = "insert into user_block (user_id,blocker_id) VALUES (?,?)";
+        Object[] setUserBlockParams = new Object[]{blockUserId,userId};
+        this.jdbcTemplate.update(setUserBlockQuery, setUserBlockParams);
+
+        String lastInsertIdQuery = "select last_insert_id()";
+        String getUserBlockQuery="select * from user_block where id=?";
+        int getUserBlockParams=this.jdbcTemplate.queryForObject(lastInsertIdQuery,int.class);
+        return this.jdbcTemplate.queryForObject(getUserBlockQuery,
+                (rs, rowNum) -> new UserBlock(
+                        rs.getInt("user_id"),
+                        rs.getInt("blocker_id"),
+                        rs.getInt("status")
+                ),
+                getUserBlockParams);
+    }
 
 }
