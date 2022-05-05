@@ -80,7 +80,7 @@ public class UserProvider {
         }
     }
 
-    /*유저 신고하기*/
+    /*유저 차단하기*/
     public UserBlock UserBlock(int blockUserId,int userId) throws BaseException{
         try{
             UserBlock userBlock = userDao.UserBlock(blockUserId,userId);

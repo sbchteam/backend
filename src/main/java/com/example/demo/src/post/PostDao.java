@@ -305,14 +305,51 @@ public class PostDao {
                 ),
                 getInterestParams);
     }
-
+    /*거래 상황 변경*/
     public PostDetail changeTranslate(int postId,int userId, String translateStatus){
         String changeTranslateQuery="update post set transaction_status=? where id=? && post.user_id=?";
         Object[] changeTranslateParams = new Object[]{translateStatus,postId,userId};
         this.jdbcTemplate.update(changeTranslateQuery, changeTranslateParams);
         return getPost(postId,userId);
     }
+    /*공구 게시글 신고*/
+    public PostInterest PostReport(int postId,int userId){
 
+        String setPostReportQuery = "insert into post_report (post_id,user_id) VALUES (?,?)";
+        Object[] setPostReportParams = new Object[]{postId,userId};
+        this.jdbcTemplate.update(setPostReportQuery, setPostReportParams);
+
+        String lastInsertIdQuery = "select last_insert_id()";
+        int getPostReportParams=this.jdbcTemplate.queryForObject(lastInsertIdQuery,int.class);
+
+        /*만약 이 postId의 신고가 총합 2번이라면 status=0으로 설정*/
+        String checkReportCnt="" +
+                "select count(*) as reportCnt\n" +
+                "from post_report pr\n" +
+                "where post_id=?\n" +
+                "group by pr.post_id";
+        int reportCnt= this.jdbcTemplate.queryForObject(checkReportCnt,
+                int.class,
+                postId);
+
+        if(reportCnt==2){
+
+            String changeStatusQuery="update post set status=? where id=?";
+            Object[] changeStatusParams = new Object[]{0,postId};
+            this.jdbcTemplate.update(changeStatusQuery, changeStatusParams);
+        }
+
+        String getPostReportQuery="select * from post_report where id=?";
+        return this.jdbcTemplate.queryForObject(getPostReportQuery,
+                (rs, rowNum) -> new PostInterest(
+                        rs.getInt("post_id"),
+                        rs.getInt("user_id"),
+                        rs.getInt("status")
+                ),
+                getPostReportParams);
+    }
+
+    /*post객체 반환*/
     public Post getPostObject(int postId){
         String getPostObjectQuery =
                 "select *\n" +

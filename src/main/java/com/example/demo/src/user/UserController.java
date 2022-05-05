@@ -279,7 +279,6 @@ public class UserController {
     /**
      * 유저신용도평가 & 후기작성 API
      * [POST] /users/evaluation
-     * @return BaseResponse<String>
      */
     @ResponseBody
     @PostMapping("evaluation")
@@ -294,9 +293,8 @@ public class UserController {
     }
 
     /**
-     * 유저신용도평가 & 후기작성 API
-     * [POST] /users/evaluation
-     * @return BaseResponse<String>
+     * 유저 차단하기 API
+     * [GET] /users/block/:userId
      */
     @ResponseBody
     @GetMapping("block/{userId}")
