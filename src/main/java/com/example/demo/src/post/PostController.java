@@ -133,10 +133,10 @@ public class PostController {
 
     /**
      * 공구 게시글 신고하기 API
-     * [GET] /users/block/:userId
+     * [GET] /posts/report/:postId
      */
     @ResponseBody
-    @GetMapping("block/{postId}")
+    @GetMapping("report/{postId}")
     public BaseResponse<PostInterest> PostReport(@PathVariable(value = "postId") int postId){
         try {
             int userId = jwtService.getUserIdx();
