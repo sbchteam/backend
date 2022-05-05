@@ -80,6 +80,16 @@ public class UserProvider {
         }
     }
 
+    /*유저 차단하기*/
+    public UserBlock UserBlock(int blockUserId,int userId) throws BaseException{
+        try{
+            UserBlock userBlock = userDao.UserBlock(blockUserId,userId);
+            return userBlock;
+        }
+        catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
     public int checkEmail(String email) throws BaseException{
         try{
             return userDao.checkEmail(email);

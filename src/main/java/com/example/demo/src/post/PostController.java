@@ -129,7 +129,21 @@ public class PostController {
         } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));
         }
-
     }
 
+    /**
+     * 공구 게시글 신고하기 API
+     * [GET] /users/block/:userId
+     */
+    @ResponseBody
+    @GetMapping("block/{postId}")
+    public BaseResponse<PostInterest> PostReport(@PathVariable(value = "postId") int postId){
+        try {
+            int userId = jwtService.getUserIdx();
+            PostInterest postReport=postProvider.PostReport(postId,userId);
+            return new BaseResponse<>(postReport);
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
 }

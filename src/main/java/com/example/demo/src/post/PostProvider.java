@@ -120,4 +120,15 @@ public class PostProvider {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+
+    /*공구게시글 신고하기*/
+    public PostInterest PostReport(int postId,int userId) throws BaseException{
+        try{
+            PostInterest postReport = postDao.PostReport(postId,userId);
+            return postReport;
+        }
+        catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
 }
