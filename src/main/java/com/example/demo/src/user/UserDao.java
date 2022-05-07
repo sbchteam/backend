@@ -116,9 +116,52 @@ public class UserDao {
                         rs.getString("content"),
                         rs.getString("nick")
                 ),userId
+          );
+    }
+   /*찜한 공구 조회*/
+    public List<UserPosts> getUserInterest(int userId){
+        String getUsersQuery = "" +
+                "select post.id,title,category, price, post.created_at,img\n" +
+                "from post\n" +
+                "join post_interest p on post.id = p.post_id\n" +
+                "join category c on post.category_id = c.id\n" +
+                "left join post_image pi on post.id = pi.post_id\n" +
+                "where p.user_id=?\n" +
+                "group by post.id;";
+        SimpleDateFormat dateFormat= new SimpleDateFormat("yyyy년 MM월 dd일");
+        return this.jdbcTemplate.query(getUsersQuery,
+                (rs,rowNum) -> new UserPosts(
+                        rs.getInt("post.id"),
+                        rs.getString("category"),
+                        rs.getString("title"),
+                        rs.getInt("price"),
+                        dateFormat.format(rs.getTimestamp("post.created_at")),
+                        rs.getString("img")
+                ),userId
         );
     }
-
+    /*찜한 공구 조회*/
+    public List<UserPosts> getUserJoin(int userId){
+        String getUsersQuery = "" +
+                "select post.id, title,category, price, post.created_at,img\n" +
+                "from post\n" +
+                "join post_join p on post.id = p.post_id\n" +
+                "join category c on post.category_id = c.id\n" +
+                "left join post_image pi on post.id = pi.post_id\n" +
+                "where p.user_id=?\n" +
+                "group by post.id;";
+        SimpleDateFormat dateFormat= new SimpleDateFormat("yyyy년 MM월 dd일");
+        return this.jdbcTemplate.query(getUsersQuery,
+                (rs,rowNum) -> new UserPosts(
+                        rs.getInt("post.id"),
+                        rs.getString("category"),
+                        rs.getString("title"),
+                        rs.getInt("price"),
+                        dateFormat.format(rs.getTimestamp("post.created_at")),
+                        rs.getString("img")
+                ),userId
+        );
+    }
     public UserAddress getUserAddress(int locationId){
         String getUserAddressQuery = "select * from user_location where id = ?";
 

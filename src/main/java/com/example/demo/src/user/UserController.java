@@ -46,7 +46,7 @@ public class UserController {
      */
     //Query String
     @ResponseBody
-    @GetMapping("") // (GET) 127.0.0.1:9000/app/users
+    @GetMapping("")
     public BaseResponse<List<User>> getUsers() {
         try{
             List<User> users = userProvider.getUsers();
@@ -63,7 +63,7 @@ public class UserController {
      */
     // Path-variable
     @ResponseBody
-    @GetMapping("/profile/{userId}") // (GET) 127.0.0.1:9000/app/users/:userIdx
+    @GetMapping("/profile/{userId}")
     public BaseResponse<UserProfile> getUserProfile(@PathVariable(value = "userId") int userId) {
         // Get Users
         try{
@@ -83,7 +83,7 @@ public class UserController {
      */
     // Path-variable
     @ResponseBody
-    @GetMapping("/host/{userId}") // (GET) 127.0.0.1:9000/app/users/:userIdx
+    @GetMapping("/host/{userId}")
     public BaseResponse<List<UserPosts>> getUserHost(@PathVariable(value = "userId") int userId) {
         // Get Users
         try{
@@ -104,7 +104,7 @@ public class UserController {
      */
     // Path-variable
     @ResponseBody
-    @GetMapping("/review/{userId}") // (GET) 127.0.0.1:9000/app/users/:userIdx
+    @GetMapping("/review/{userId}")
     public BaseResponse<List<UserReviews>> getUserReview(@PathVariable(value = "userId") int userId) {
         // Get Users
         try{
@@ -117,14 +117,45 @@ public class UserController {
             return new BaseResponse<>((exception.getStatus()));
         }
     }
-
+    /**
+     * 유저가 주최한 공구 조회 API
+     * [GET] /users/interest
+     */
+    // Path-variable
+    @ResponseBody
+    @GetMapping("/interest")
+    public BaseResponse<List<UserPosts>> getUserInterest() {
+        try{
+            int userId=jwtService.getUserIdx();
+            List<UserPosts> userPosts = userProvider.getUserInterest(userId);
+            return new BaseResponse<>(userPosts);
+        } catch(BaseException exception){
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+    /**
+     * 유저가 참여한 공구 조회 API
+     * [GET] /users/join
+     */
+    // Path-variable
+    @ResponseBody
+    @GetMapping("/join")
+    public BaseResponse<List<UserPosts>> getUserJoin() {
+        try{
+            int userId=jwtService.getUserIdx();
+            List<UserPosts> userPosts = userProvider.getUserJoin(userId);
+            return new BaseResponse<>(userPosts);
+        } catch(BaseException exception){
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
 
     /**
      * 동/면/읍 검색 api
      * /users/search
      * 입력받을 값 - 동/읍/면 검색 단어*/
     @ResponseBody
-    @GetMapping("/location/search") // (GET) 127.0.0.1:9000/app/users
+    @GetMapping("/location/search")
     public BaseResponse<AddressSearchList> getAddressSearch(@RequestParam(required = false) String dong) {
         try {
             int userId = jwtService.getUserIdx();
@@ -139,7 +170,7 @@ public class UserController {
      * /users/search/choice
      * 입력받을 값 - region1, 2, 3*/
     @ResponseBody
-    @GetMapping("/location/choice") // (GET) 127.0.0.1:9000/app/users
+    @GetMapping("/location/choice")
     public BaseResponse<UserAddress> UserAddressEnroll(@RequestParam(required = false) String region1, String region2, String region3) {
         try {
             int userId = jwtService.getUserIdx();
@@ -155,7 +186,7 @@ public class UserController {
      * /users/location/certify
      * 입력받을 값 - 현재 유저의 좌표와 인증할 위치정보id*/
     @ResponseBody
-    @GetMapping("/location/certify") // (GET) 127.0.0.1:9000/app/users
+    @GetMapping("/location/certify")
     public BaseResponse<UserAddress> UserAddressCertify(@RequestParam(required = false) String longi, String lati,int locationId) {
         try {
             int userId = jwtService.getUserIdx();
@@ -171,7 +202,7 @@ public class UserController {
      * /users/location/now
      * 입력받을 값 - 현재 유저의 좌표와 인증할 위치정보id*/
     @ResponseBody
-    @GetMapping("/location/now") // (GET) 127.0.0.1:9000/app/users
+    @GetMapping("/location/now")
     public BaseResponse<UserAddress> UserAddressNow(@RequestParam(required = false) String longi, String lati) {
         try {
             int userId = jwtService.getUserIdx();

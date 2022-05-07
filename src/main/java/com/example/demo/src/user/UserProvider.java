@@ -79,6 +79,24 @@ public class UserProvider {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+    /*찜한 공구 조회*/
+    public List<UserPosts> getUserInterest(int userId) throws BaseException {
+        try {
+            List<UserPosts> userPosts = userDao.getUserInterest(userId);
+            return userPosts;
+        } catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+    /*참여한 공구 조회*/
+    public List<UserPosts> getUserJoin(int userId) throws BaseException {
+        try {
+            List<UserPosts> userPosts = userDao.getUserJoin(userId);
+            return userPosts;
+        } catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
 
     /*유저 차단하기*/
     public UserBlock UserBlock(int blockUserId,int userId) throws BaseException{
