@@ -118,7 +118,7 @@ public class UserController {
         }
     }
     /**
-     * 유저가 주최한 공구 조회 API
+     * 유저가 찜한 공구 조회 API
      * [GET] /users/interest
      */
     // Path-variable
