@@ -88,7 +88,7 @@ public class UserDao {
                 "from post\n" +
                 "join category c on post.category_id = c.id\n" +
                 "left join post_image pi on post.id = pi.post_id\n" +
-                "where user_id=?\n" +
+                "where user_id=? && post.status=1\n" +
                 "group by post.id;";
         SimpleDateFormat dateFormat= new SimpleDateFormat("yyyy년 MM월 dd일");
         return this.jdbcTemplate.query(getUsersQuery,
