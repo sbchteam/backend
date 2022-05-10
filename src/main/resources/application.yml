@@ -1,0 +1,32 @@
+server:
+  port: 9000
+
+spring:
+  application:
+    name: demo
+
+  datasource:
+    platform: mysql
+    url: jdbc:mysql://sbch-db.cdlpwyobq9wn.ap-northeast-2.rds.amazonaws.com/sbchDB?autoReconnect=true # 변경해주세요
+    username: admin # 변경해주세요
+    password: jisunowh11 # 변경해주세요
+    driver-class-name: com.mysql.cj.jdbc.Driver # mysql 8버전
+
+cloud:
+  aws:
+    credentials:
+      accessKey: AKIASSDYX2KQIWGMRV5D
+      secretKey: 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
+    s3:
+      bucket: sbch-bucket
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
+
+logging:
+  level:
+    com:
+      amazonaws:
+        util:
+          EC2MetadataUtils: error
