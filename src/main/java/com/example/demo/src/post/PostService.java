@@ -1,32 +1,15 @@
 package com.example.demo.src.post;
 
 import com.example.demo.config.BaseException;
-import com.example.demo.config.secret.Secret;
-import com.example.demo.src.user.UserDao;
-import com.example.demo.src.user.UserProvider;
-import com.example.demo.src.user.model.*;
-import com.example.demo.utils.AES128;
+import com.example.demo.src.post.model.Post;
 import com.example.demo.utils.JwtService;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.bind.annotation.RequestBody;
 
-import javax.sql.DataSource;
-
-import java.util.ArrayList;
-import java.util.List;
+import java.sql.Timestamp;
 
 import static com.example.demo.config.BaseResponseStatus.*;
 
@@ -49,5 +32,36 @@ public class PostService {
 
     }
 
+    /**공구 게시물 작성 API*/
+    public void create(Post post){
+         postDao.createPost(post);
+    }
 
+    /**공구 게시물 수정 API*/
+    public void update(Post post, int postId) {
+        postDao.updatePost(post, postId);
+    }
+
+    /**공구 게시물 삭제 API*/
+    public void delete(int postId) {
+        postDao.deletePost(postId);
+    }
+
+    /**공구 게시물 카테고리 선택 API*/
+    public String postCategory(int postId) {
+        String category = postDao.getCategory(postId);
+        return category;
+    }
+
+    /**공구 게시물 날짜 및 시간 선택 API*/
+    //여기는 PostProvider 양식 따라해봤어요
+    public String postDate(int postId) throws BaseException {
+        try {
+            String date = postDao.getDate(postId);
+            return date;
+        }
+        catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
 }

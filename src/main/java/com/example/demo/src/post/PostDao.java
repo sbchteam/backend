@@ -1,12 +1,13 @@
 package com.example.demo.src.post;
 
 import com.example.demo.src.post.model.*;
-import com.example.demo.src.user.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
@@ -313,7 +314,7 @@ public class PostDao {
         return getPost(postId,userId);
     }
     /*공구 게시글 신고*/
-    public PostInterest PostReport(int postId,int userId){
+    public PostInterest PostReport(int postId, int userId){
 
         String setPostReportQuery = "insert into post_report (post_id,user_id) VALUES (?,?)";
         Object[] setPostReportParams = new Object[]{postId,userId};
@@ -374,5 +375,58 @@ public class PostDao {
                         rs.getTimestamp("updated_at")
                 ),
                 getPostObjectParams);
+    }
+
+    /*게시물 작성*/
+    public void createPost(Post post) {
+        String getPostingQuery = "insert into post (postId, userId, title, categoryId, product_name, " +
+                "price, locationId, date, num, content, transactionStatus, status," +
+                "createdAt, updatedAt) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+        Object[] createPostParams = {post.getPostId(), post.getUserId(),post.getTitle(),
+                post.getCategoryId(), post.getProductName(), post.getPrice(), post.getLocationId(),
+                post.getDate(), post.getNum(), post.getContent(), post.getTransactionStatus(),
+                post.getStatus(), post.getCreatedAt(), post.getUpdatedAt()};
+
+        this.jdbcTemplate.update(getPostingQuery, createPostParams);
+    }
+
+    /*게시물 삭제*/
+    public int deletePost(int postId) {
+        String deleteQuery = "delete from post where id=?";
+        return this.jdbcTemplate.update(deleteQuery, postId);
+    }
+
+    /*게시물 수정*/
+    public void updatePost(Post post, int postId) {
+        String updateQuery = "update post set title=?, categoryId=?, productName=?," +
+                "price=?, locationId=?, date=?, num=?, content=? where id=?";
+        this.jdbcTemplate.update(updateQuery);
+    }
+
+    /*게시물 카테고리 선택*/
+    public String getCategory(int postId) {
+        String getPostCategoryQuery = "" +
+                "select category\n" +
+                "from post_category\n" +
+                "where post_id=?";
+        int getPostCategoryParams = postId;
+        return this.jdbcTemplate.queryForObject(getPostCategoryQuery,
+                (rs, rowNum) -> new String(
+                        rs.getString("category")
+                ), getPostCategoryParams);
+
+    }
+
+    /*게시물 날짜 선택*/
+    public String getDate(int postId) {
+        String getPostDateQuery = "" +
+                "select date\n" +
+                "from post_date\n" +
+                "where post_id=?";
+        int getPostDateParams = postId;
+        return this.jdbcTemplate.queryForObject(getPostDateQuery,
+                (rs, rowNum) -> new String(
+                        rs.getString("date")
+                ), getPostDateParams);
     }
 }

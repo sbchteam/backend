@@ -10,8 +10,11 @@ import com.example.demo.config.BaseResponse;
 import com.example.demo.src.user.model.*;
 import com.example.demo.utils.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
+import javax.swing.tree.RowMapper;
 import java.util.List;
 
 import static com.example.demo.config.BaseResponseStatus.*;
@@ -29,7 +32,6 @@ public class PostController {
     private final PostService postService;
     @Autowired
     private final JwtService jwtService;
-
 
     public PostController(PostProvider postProvider, PostService postService, JwtService jwtService){
         this.postProvider = postProvider;
@@ -147,5 +149,67 @@ public class PostController {
         }
     }
 
-    //push testing
+    /**
+     * 공구 게시글 작성 API
+     * [GET] /posts
+     * */
+    @ResponseBody
+    @GetMapping("/postForm")
+    public String write(Post post) throws Exception {
+        postService.create(post);
+        return "add-Post";
+    }
+
+    /**
+     * 공구 게시글 작성처리 API
+     * [POST] /posts/:postId
+     */
+    @PostMapping("/saved")
+    public String posting(@ModelAttribute("post") Post post) throws Exception {
+        postService.create(post);
+        return "redirect:/:postId";
+    }
+
+    /**
+     * 공구 게시글 카테고리 선택 API
+     * [GET]
+     */
+    @ResponseBody
+    @GetMapping("/postForm/category")
+    public String getCategory(@PathVariable int postId) throws Exception {
+        postService.postCategory(postId);
+        return "postForm-category";
+    }
+
+    /**
+     * 공구 게시글 날짜 및 시간 선택 API
+     * [GET]
+     */
+    @ResponseBody
+    @GetMapping("/postFrom/date")
+    public String dateForm(@PathVariable int postId) throws Exception {
+        postService.postDate(postId);
+        return "postForm-date";
+    }
+
+    /**
+     * 공구 게시글 수정 API
+     */
+    @ResponseBody
+    @PostMapping("/update/{postId}")
+    public String update(@ModelAttribute Post post, @PathVariable int postId) throws Exception {
+        postService.update(post, postId);
+        return "redirect:/:postId";
+    }
+
+    /**
+     * 공구 게시글 삭제 APi
+     */
+    @ResponseBody
+    @RequestMapping("/delete/{postId}")
+    public String delete(@PathVariable int postId) throws Exception {
+        postService.delete(postId);
+        return "redirect:/:postId";
+    }
+
 }
