@@ -375,4 +375,20 @@ public class PostDao {
                 ),
                 getPostObjectParams);
     }
+
+    //post_image에 imgUrl넣음
+    public List<String> putImage(int postId,String imgurl){
+        String checkInterestQuery = "insert into post_image (post_id,img) VALUES (?,?)";
+        Object[] checkInterestParams = new Object[]{postId,imgurl};
+        this.jdbcTemplate.update(checkInterestQuery, checkInterestParams);
+
+        return getPostImg(postId);
+    }
+
+    //이미지 한개만 받을때
+    public void putPostImage(int postId,String imgurl){
+        String checkInterestQuery = "insert into post_image (post_id,img) VALUES (?,?)";
+        Object[] checkInterestParams = new Object[]{postId,imgurl};
+        this.jdbcTemplate.update(checkInterestQuery, checkInterestParams);
+    }
 }

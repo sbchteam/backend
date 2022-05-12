@@ -277,4 +277,11 @@ public class UserDao {
                 getUserBlockParams);
     }
 
+    //user에 imgUrl넣음
+    public void putProfileImage(int userId,String imgurl){
+        String checkInterestQuery = "update user set profile_img=? where id=?";
+        Object[] checkInterestParams = new Object[]{imgurl,userId};
+        this.jdbcTemplate.update(checkInterestQuery, checkInterestParams);
+
+    }
 }

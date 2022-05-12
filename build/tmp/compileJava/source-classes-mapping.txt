@@ -14,6 +14,8 @@ com/example/demo/utils/ValidationRegex.java
  com.example.demo.utils.ValidationRegex
 com/example/demo/src/post/PostProvider.java
  com.example.demo.src.post.PostProvider
+com/example/demo/src/s3/S3Uploader.java
+ com.example.demo.src.s3.S3Uploader
 com/example/demo/src/user/model/PostLoginRes.java
  com.example.demo.src.user.model.PostLoginRes
 com/example/demo/src/user/UserDao.java
@@ -26,6 +28,8 @@ com/example/demo/config/BaseResponseStatus.java
  com.example.demo.config.BaseResponseStatus
 com/example/demo/src/post/model/PostDetail.java
  com.example.demo.src.post.model.PostDetail
+com/example/demo/src/s3/S3Controller.java
+ com.example.demo.src.s3.S3Controller
 com/example/demo/src/WebSecurityConfig.java
  com.example.demo.src.WebSecurityConfig
 com/example/demo/src/test/TestController.java
@@ -46,6 +50,8 @@ com/example/demo/src/user/model/PostUserRes.java
  com.example.demo.src.user.model.PostUserRes
 com/example/demo/src/user/UserController.java
  com.example.demo.src.user.UserController
+com/example/demo/config/AmazonS3Config.java
+ com.example.demo.config.AmazonS3Config
 com/example/demo/config/BaseResponse.java
  com.example.demo.config.BaseResponse
 com/example/demo/src/post/model/Post.java

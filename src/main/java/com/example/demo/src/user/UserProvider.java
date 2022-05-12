@@ -126,7 +126,12 @@ public class UserProvider {
         }
 
         if(postLoginReq.getPassword().equals(password)){
-            int userId = userDao.getUser(postLoginReq).getId();
+            User user2=userDao.getUser(postLoginReq);
+            int userId = user2.getId();
+            int status=user2.getStatus();
+            if(status==0){ //탈퇴한 유저 로그인 못함.
+                throw new BaseException(FAILED_TO_LOGIN);
+            }
             String jwt = jwtService.createJwt(userId);
             return new PostLoginRes(userId,jwt);
         }
