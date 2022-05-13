@@ -279,9 +279,9 @@ public class UserDao {
 
     //user에 imgUrl넣음
     public void putProfileImage(int userId,String imgurl){
-        String checkInterestQuery = "update user set profile_img=? where id=?";
-        Object[] checkInterestParams = new Object[]{imgurl,userId};
-        this.jdbcTemplate.update(checkInterestQuery, checkInterestParams);
+        String putProfileImageQuery = "update user set profile_img=? where id=?";
+        Object[] putProfileImageParams = new Object[]{imgurl,userId};
+        this.jdbcTemplate.update(putProfileImageQuery, putProfileImageParams);
 
     }
 }

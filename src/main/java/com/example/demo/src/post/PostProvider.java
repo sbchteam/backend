@@ -61,6 +61,16 @@ public class PostProvider {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+    /**공구 검색 api*/
+    public List<PostList> getPostSearch(int userId,String word) throws BaseException{
+        try{
+            List<PostList> postLists = postDao.getPostSearch(userId,word);
+            return postLists;
+        }
+        catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
     /**
      * 공구 상세 페이지 API*/
     public PostDetailImg getPost(int postId, int userId) throws BaseException {
