@@ -339,4 +339,19 @@ public class UserController {
         }
     }
 
+    /**
+     * 키워드 조회 api
+     */
+    @ResponseBody
+    @GetMapping("/keyword")
+    public BaseResponse<List<String>> getKeyword(){
+        try {
+            int userId = jwtService.getUserIdx();
+            List<String> keywords = userProvider.getKeyword(userId);
+            return new BaseResponse<>(keywords);
+
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
 }

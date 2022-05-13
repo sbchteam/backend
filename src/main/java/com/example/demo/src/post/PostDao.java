@@ -146,6 +146,45 @@ public class PostDao {
                 getPostsOngoingParams, getPostsOngoingParams,getPostsOngoingParams
         );
     }
+    //공구 검색 api
+    public List<PostList> getPostSearch(int userId, String word) {
+        String getPostSearchQuery =
+                "select *\n" +
+                "from(\n" +
+                getPostsquery+
+                "where p.product_name like ? && p.status=1 && TIMESTAMPDIFF(minute , now(),p.date)>0 && p.user_id not in (\n" +
+                "    select user_id\n" +
+                "    from user_block\n" +
+                "    where blocker_id=?\n" +
+                ")\n"+
+                "group by p.id) plist\n" +
+                "order by plist.created_at desc";
+
+        int getPostSearchParams = userId;
+        String keyword='%'+word+'%';
+        SimpleDateFormat dateFormat= new SimpleDateFormat("yyyy년 MM월 dd일");
+        return this.jdbcTemplate.query(getPostSearchQuery,
+                (rs, rowNum) -> new PostList(
+                        rs.getInt("id"),
+                        rs.getString("title"),
+                        rs.getString("category"),
+                        rs.getInt("price"),
+                        rs.getString("transaction_status"),
+                        rs.getInt("interest_status"),
+                        rs.getInt("interest_num"),
+                        rs.getString("timediff"),
+                        rs.getString("img")
+                ),
+                getPostSearchParams, getPostSearchParams, keyword,getPostSearchParams
+        );
+    }
+    //키워드 등록 api
+    public void PostKeyword(int userId,String word){
+        String PostKeywordQuery = "insert into user_keyword (user_id,keyword) VALUES (?,?)";
+        Object[] PostKeywordParams = new Object[]{userId,word};
+        this.jdbcTemplate.update(PostKeywordQuery, PostKeywordParams);
+    }
+
 
     //date처리, createdAt처리리
    public PostDetail getPost(int postId, int userId) {
@@ -374,5 +413,21 @@ public class PostDao {
                         rs.getTimestamp("updated_at")
                 ),
                 getPostObjectParams);
+    }
+
+    //post_image에 imgUrl넣음
+    public List<String> putImage(int postId,String imgurl){
+        String putImageQuery = "insert into post_image (post_id,img) VALUES (?,?)";
+        Object[] putImageParams = new Object[]{postId,imgurl};
+        this.jdbcTemplate.update(putImageQuery, putImageParams);
+
+        return getPostImg(postId);
+    }
+
+    //이미지 한개만 받을때
+    public void putPostImage(int postId,String imgurl){
+        String putPostImageQuery = "insert into post_image (post_id,img) VALUES (?,?)";
+        Object[] putPostImageParams = new Object[]{postId,imgurl};
+        this.jdbcTemplate.update(putPostImageQuery, putPostImageParams);
     }
 }
