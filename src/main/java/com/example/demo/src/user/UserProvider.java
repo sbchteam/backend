@@ -141,4 +141,17 @@ public class UserProvider {
 
     }
 
+    /**키워드 조회 api*/
+    public List<String> getKeyword(int userId) throws BaseException{
+        try{
+            if(userId==0){
+                throw new BaseException(EMPTY_JWT);
+            }
+            List<String> keywords=userDao.getKeyword(userId);
+            return keywords;
+        }
+        catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
 }

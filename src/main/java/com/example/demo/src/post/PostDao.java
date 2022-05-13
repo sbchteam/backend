@@ -178,6 +178,13 @@ public class PostDao {
                 getPostSearchParams, getPostSearchParams, keyword,getPostSearchParams
         );
     }
+    //키워드 등록 api
+    public void PostKeyword(int userId,String word){
+        String PostKeywordQuery = "insert into user_keyword (user_id,keyword) VALUES (?,?)";
+        Object[] PostKeywordParams = new Object[]{userId,word};
+        this.jdbcTemplate.update(PostKeywordQuery, PostKeywordParams);
+    }
+
 
     //date처리, createdAt처리리
    public PostDetail getPost(int postId, int userId) {

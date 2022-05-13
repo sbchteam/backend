@@ -80,6 +80,22 @@ public class PostController {
         }
 
     }
+    /**
+     * 키워드 등록 api
+     */
+    @ResponseBody
+    @GetMapping("/keyword")
+    public BaseResponse<String> PostKeyword(@RequestParam(required = false) String word){
+        try {
+            int userId = jwtService.getUserIdx();
+            String keyword = postProvider.PostKeyword(userId,word);
+            return new BaseResponse<>(keyword);
+
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+
 
     /**
      * 공구 상세 페이지(기본화면) api

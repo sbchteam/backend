@@ -282,6 +282,16 @@ public class UserDao {
         String putProfileImageQuery = "update user set profile_img=? where id=?";
         Object[] putProfileImageParams = new Object[]{imgurl,userId};
         this.jdbcTemplate.update(putProfileImageQuery, putProfileImageParams);
+    }
 
+    //키워드 검색 api
+    public List<String> getKeyword(int userId){
+        String getKeywordQuery = "select * from user_keyword where user_id=?";
+        Object[] getKeywordParams = new Object[]{userId};
+        return this.jdbcTemplate.query(getKeywordQuery,
+                (rs, rowNum) -> new String(
+                        rs.getString("keyword")
+                ),
+                getKeywordParams);
     }
 }
