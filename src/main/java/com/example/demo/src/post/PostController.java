@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.swing.tree.RowMapper;
 import java.util.List;
@@ -150,24 +151,26 @@ public class PostController {
     }
 
     /**
-     * 공구 게시글 작성 API
-     * [GET] /posts
-     * */
-    @ResponseBody
-    @GetMapping("/postForm")
-    public String write(Post post) throws Exception {
-        postService.create(post);
-        return "add-Post";
-    }
-
-    /**
      * 공구 게시글 작성처리 API
      * [POST] /posts/:postId
      */
-    @PostMapping("/saved")
-    public String posting(@ModelAttribute("post") Post post) throws Exception {
-        postService.create(post);
-        return "redirect:/:postId";
+    @ResponseBody
+    @PostMapping("/save")
+    public BaseResponse<PostDetail> savePost(Post post) {
+        if (post.getTitle().equals(""))
+            return new BaseResponse<>(POST_POSTS_EMPTY_TITLE);
+        if (post.getPrice() < 100)
+            return new BaseResponse<>(POST_POSTS_INVALID_PRICE);
+        if (post.getNum() < 1)
+            return new BaseResponse<>(POST_POSTS_INVALID_NUMBER_OF_PEOPLE);
+        if (post.getContent().length() < 10)
+            return new BaseResponse<>(POST_POSTS_INVALID_CONTENT);
+        try {
+            PostDetail savePost = postService.create(post);
+            return new BaseResponse<>(savePost);
+        } catch (BaseException exception) {
+            return new BaseResponse<>(exception.getStatus());
+        }
     }
 
     /**
@@ -206,10 +209,10 @@ public class PostController {
      * 공구 게시글 삭제 APi
      */
     @ResponseBody
-    @RequestMapping("/delete/{postId}")
+    @PostMapping("/delete/{postId}")
     public String delete(@PathVariable int postId) throws Exception {
         postService.delete(postId);
-        return "redirect:/:postId";
+        return "redirect:";
     }
 
 }

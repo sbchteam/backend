@@ -87,6 +87,7 @@ public class PostDao {
                 getPostsParams, getPostsParams,getPostsParams
         );
     }
+
     public List<PostList> getPostsInterest(int userId) {
         String getPostsInterestQuery =
                 "select *\n" +
@@ -378,37 +379,42 @@ public class PostDao {
     }
 
     /*게시물 작성*/
-    public void createPost(Post post) {
-        String getPostingQuery = "insert into post (postId, userId, title, categoryId, product_name, " +
-                "price, locationId, date, num, content, transactionStatus, status," +
-                "createdAt, updatedAt) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+    public PostDetail createPost(Post post) {
+        String getPostingQuery = "insert into post (id, user_id, title, category_id, product_name, " +
+                "price, location_id, date, num, content, transaction_status, status)" +
+                "VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
         Object[] createPostParams = {post.getPostId(), post.getUserId(),post.getTitle(),
                 post.getCategoryId(), post.getProductName(), post.getPrice(), post.getLocationId(),
                 post.getDate(), post.getNum(), post.getContent(), post.getTransactionStatus(),
-                post.getStatus(), post.getCreatedAt(), post.getUpdatedAt()};
-
+                post.getStatus()};
         this.jdbcTemplate.update(getPostingQuery, createPostParams);
+
+        String lastInsertQuery = "select last_insert_id()";
+
+        int getPostParams = post.getPostId();
+        int getPostParams2 = post.getUserId();
+        return getPost(getPostParams, getPostParams2);
     }
 
     /*게시물 삭제*/
-    public int deletePost(int postId) {
+    public void deletePost(int postId) {
         String deleteQuery = "delete from post where id=?";
-        return this.jdbcTemplate.update(deleteQuery, postId);
+        this.jdbcTemplate.update(deleteQuery, postId);
     }
 
     /*게시물 수정*/
     public void updatePost(Post post, int postId) {
-        String updateQuery = "update post set title=?, categoryId=?, productName=?," +
-                "price=?, locationId=?, date=?, num=?, content=? where id=?";
-        this.jdbcTemplate.update(updateQuery);
+        String updateQuery = "update post set title=?, category_id=?, product_name=?," +
+                "price=?, location_id=?, date=?, num=?, content=? where id=?";
+        this.jdbcTemplate.update(updateQuery, postId);
     }
 
     /*게시물 카테고리 선택*/
     public String getCategory(int postId) {
         String getPostCategoryQuery = "" +
                 "select category\n" +
-                "from post_category\n" +
-                "where post_id=?";
+                "from category\n" +
+                "where id=?";
         int getPostCategoryParams = postId;
         return this.jdbcTemplate.queryForObject(getPostCategoryQuery,
                 (rs, rowNum) -> new String(

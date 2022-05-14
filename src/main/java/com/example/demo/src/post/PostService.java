@@ -2,14 +2,12 @@ package com.example.demo.src.post;
 
 import com.example.demo.config.BaseException;
 import com.example.demo.src.post.model.Post;
+import com.example.demo.src.post.model.PostDetail;
 import com.example.demo.utils.JwtService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
-
-import java.sql.Timestamp;
 
 import static com.example.demo.config.BaseResponseStatus.*;
 
@@ -32,9 +30,15 @@ public class PostService {
 
     }
 
-    /**공구 게시물 작성 API*/
-    public void create(Post post){
-         postDao.createPost(post);
+    /**공구 게시물 작성 API
+     **/
+    public PostDetail create(Post post) throws BaseException{
+         try {
+             PostDetail postDetail = postDao.createPost(post);
+             return postDetail;
+         } catch (Exception exception) {
+             throw new BaseException(DATABASE_ERROR);
+         }
     }
 
     /**공구 게시물 수정 API*/
