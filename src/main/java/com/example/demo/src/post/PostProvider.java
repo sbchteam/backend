@@ -31,7 +31,7 @@ public class PostProvider {
         this.jwtService = jwtService;
     }
 
-    /**공구 목록 조회 API*/
+    /** 공구 목록 조회 API*/
     public List<PostList> getPostsInterest(int userId) throws BaseException{
         try{
             List<PostList> postLists = postDao.getPostsInterest(userId);
@@ -61,7 +61,7 @@ public class PostProvider {
             throw new BaseException(DATABASE_ERROR);
         }
     }
-    /**공구 검색 api*/
+    /** 공구 검색 api*/
     public List<PostList> getPostSearch(int userId,String word) throws BaseException{
         try{
             List<PostList> postLists = postDao.getPostSearch(userId,word);
@@ -71,7 +71,7 @@ public class PostProvider {
             throw new BaseException(DATABASE_ERROR);
         }
     }
-    /**키워드 등록 api*/
+    /** 키워드 등록 api*/
     public String PostKeyword(int userId,String word) throws BaseException{
         try{
             if(userId==0){
@@ -85,8 +85,7 @@ public class PostProvider {
         }
     }
 
-    /**
-     * 공구 상세 페이지 API*/
+    /** 공구 상세 페이지 API*/
     public PostDetailImg getPost(int postId, int userId) throws BaseException {
         try {
             PostDetail postDetail=postDao.getPost(postId,userId);
@@ -104,7 +103,7 @@ public class PostProvider {
             throw new BaseException(DATABASE_ERROR);
         }
     }
-    /**공구 추천하기 */
+    /** 공구 추천하기 */
     public List<PostRecommend> getPostsRecommend(int postId) throws BaseException{
         try{
             List<PostRecommend> postRecommends = postDao.getPostsRecommend(postId);
@@ -115,8 +114,7 @@ public class PostProvider {
         }
     }
 
-    /**
-     * 작품에 관심 누르기 API*/
+    /** 작품에 관심 누르기 API*/
     public PostInterest PushPostInterest(int postId,int userId) throws BaseException {
         //중복
         try{
@@ -128,8 +126,7 @@ public class PostProvider {
         }
     }
 
-    /**
-     * 거래상황변경 API*/
+    /** 거래상황변경 API*/
     public PostDetailImg changeTranslate(int postId,int userId,String translateStatus) throws BaseException {
         try{
             PostDetail postDetail = postDao.changeTranslate(postId,userId,translateStatus);
@@ -145,13 +142,28 @@ public class PostProvider {
         }
     }
 
-    /*공구게시글 신고하기*/
+    /** 공구게시글 신고하기*/
     public PostInterest PostReport(int postId,int userId) throws BaseException{
         try{
             PostInterest postReport = postDao.PostReport(postId,userId);
             return postReport;
         }
         catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    /** 공구 게시물 카테고리 조회 API*/
+    public List<Category> categoryList() {
+        return postDao.getCategory();
+    }
+
+    /** 공구 게시글 위치 목록 API*/
+    public List<Location> getLocation(int userId) throws BaseException {
+        try {
+            List<Location> getLocationList = postDao.getLocation(userId);
+            return getLocationList;
+        }catch (Exception exception) {
             throw new BaseException(DATABASE_ERROR);
         }
     }

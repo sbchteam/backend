@@ -430,4 +430,58 @@ public class PostDao {
         Object[] putPostImageParams = new Object[]{postId,imgurl};
         this.jdbcTemplate.update(putPostImageQuery, putPostImageParams);
     }
+
+    /*게시물 작성*/
+    public PostDetail createPost (Post post, int userId) {
+        String getPostingQuery = "insert into post (user_id, title, category_id, product_name, " +
+                "price, location_id, date, num, content)" +
+                "VALUES (?,?,?,?,?,?,?,?,?)";
+        Object[] createPostParams = {userId, post.getTitle(), post.getCategoryId(),
+                post.getProductName(), post.getPrice(), post.getLocationId(),
+                post.getDate(), post.getNum(), post.getContent()};
+        this.jdbcTemplate.update(getPostingQuery, createPostParams);
+
+        String lastInsertIDQuery = "select last_insert_id()";
+        int getPostParams = this.jdbcTemplate.queryForObject(lastInsertIDQuery, int.class);
+        int getPostParams2 = userId;
+        return getPost(getPostParams, getPostParams2);
+    }
+
+    /*게시물 수정*/
+    public void updatePost(Post post, int postId) {
+        String updateQuery = "update post set title=?, category_id=?, product_name=?," +
+                "price=?, location_id=?, date=?, num=?, content=? where id=? && user_id=?";
+        Object[] updateParams = {post.getTitle(), post.getCategoryId(), post.getProductName(),
+                post.getPrice(), post.getLocationId(), post.getDate(), post.getNum(),
+                post.getContent(),postId,post.getUserId()};
+        this.jdbcTemplate.update(updateQuery, updateParams);
+    }
+
+    /*게시물 삭제*/
+    public void deletePost(int postId, int userId) {
+        String deleteQuery = "update post set status=0 where id=? && user_id=?";
+        Object[] deleteParams = {postId, userId};
+        this.jdbcTemplate.update(deleteQuery, deleteParams);
+    }
+
+    /*카테고리 조회*/
+    public List<Category> getCategory() {
+        String getCategoryQuery = "select id, category from category";
+        return this.jdbcTemplate.query(getCategoryQuery,
+                (rs, rowNum) -> new Category(
+                        rs.getInt("Id"),
+                        rs.getString("category")
+                ), null);
+    }
+
+    /*등록 위치 가져오기*/
+    public List<Location> getLocation(int userId) {
+        String getLocationQuery = "select id, town from user_location where user_id=?";
+        int getLocationParams = userId;
+        return this.jdbcTemplate.query(getLocationQuery,
+                (rs, rowNum) -> new Location(
+                        rs.getInt("id"),
+                        rs.getString("town")
+                ), getLocationParams);
+    }
 }
