@@ -4,6 +4,8 @@ com/example/demo/src/post/model/PostDetailImg.java
  com.example.demo.src.post.model.PostDetailImg
 com/example/demo/src/post/PostController.java
  com.example.demo.src.post.PostController
+com/example/demo/src/post/model/Location.java
+ com.example.demo.src.post.model.Location
 com/example/demo/src/user/model/PostUserReq.java
  com.example.demo.src.user.model.PostUserReq
 com/example/demo/config/Constant.java
@@ -54,6 +56,8 @@ com/example/demo/config/AmazonS3Config.java
  com.example.demo.config.AmazonS3Config
 com/example/demo/config/BaseResponse.java
  com.example.demo.config.BaseResponse
+com/example/demo/src/post/model/Category.java
+ com.example.demo.src.post.model.Category
 com/example/demo/src/post/model/Post.java
  com.example.demo.src.post.model.Post
 com/example/demo/src/user/model/User.java
