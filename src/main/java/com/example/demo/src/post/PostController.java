@@ -179,4 +179,68 @@ public class PostController {
             return new BaseResponse<>((exception.getStatus()));
         }
     }
+
+    /**
+     * 공구 게시글 작성 API
+     * [POST] /posts/save
+     */
+    @ResponseBody
+    @PostMapping("/save")
+    public BaseResponse<PostDetail> savePost(@RequestBody Post post) {
+        try {
+            int userId = jwtService.getUserIdx();
+            PostDetail savePost = postService.create(post, userId);
+            return new BaseResponse<>(savePost);
+        } catch (BaseException exception) {
+            return new BaseResponse<>(exception.getStatus());
+        }
+    }
+
+    /**
+     * 공구 게시글 수정 API
+     * [PATCH] /posts/:postId
+     */
+    @ResponseBody
+    @PatchMapping("/{postId}")
+    public PostDetailImg update (@RequestBody Post post, @PathVariable int postId) throws Exception {
+        int userId = jwtService.getUserIdx();
+        post.setUserId(userId);
+        PostDetailImg postDetailImg = postService.update(post, postId);
+        return postDetailImg;
+    }
+
+    /**
+     * 공구 게시글 삭제 API
+     * [DELETE] /posts/:postId
+     */
+    @ResponseBody
+    @DeleteMapping("/{postId}")
+    public String delete (@PathVariable int postId) throws Exception {
+        int userId = jwtService.getUserIdx();
+        postService.delete(postId, userId);
+        return "redirect:";
+    }
+
+    /**
+     * 공구 게시글 카테고리 조회 API
+     * [GET] /posts/category
+     */
+    @ResponseBody
+    @GetMapping("/category")
+    public List<Category> getCategory() throws Exception {
+        List<Category> category = postProvider.categoryList();
+        return category;
+    }
+
+    /**
+     * 공구 게시글 위치 조회 API
+     * [GET] /posts/location
+     */
+    @ResponseBody
+    @GetMapping("/location")
+    public List<Location> getLocation() throws Exception {
+        int userId = jwtService.getUserIdx();
+        List<Location> location = postProvider.getLocation(userId);
+        return location;
+    }
 }

@@ -23,4 +23,25 @@ public class Post {
     private int status;
     private Timestamp createdAt;
     private Timestamp updatedAt;
+
+    public void setNullPost (Post post) {
+        if (this.userId == 0)
+            this.setUserId(post.userId);
+        if (this.title == null)
+            this.setTitle(post.getTitle());
+        if (this.categoryId == 0)
+            this.setCategoryId(post.getCategoryId());
+        if (this.productName == null)
+            this.setProductName(post.getProductName());
+        if (this.price == 0)
+            this.setPrice(post.getPrice());
+        if (this.getLocationId() == 0)
+            this.setLocationId(post.getLocationId());
+        if (this.getDate() == null)
+            this.setDate(post.getDate());
+        if (this.getNum() == 0)
+            this.setNum(post.getNum());
+        if (this.getContent() == null)
+            this.setContent(post.getContent());
+    }
 }
