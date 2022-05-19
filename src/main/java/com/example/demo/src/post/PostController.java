@@ -262,13 +262,28 @@ public class PostController {
 
     /**
      * 공구 참여수락하기 API
-     * [Get] /posts/join/:postId*/
+     * [Get] /posts/joinApply*/
     @ResponseBody
     @GetMapping("/joinApply")
     public BaseResponse<String> PostJoinApply(@RequestParam(required = false) int postId, int userId) {
 
         try{
             String result = postProvider.PostJoinApply(postId,userId);
+            return new BaseResponse<>(result);
+        } catch(BaseException exception){
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+
+    /**
+     * 공구 참여 거절하기/ 주최자가 참여 취소하기 API
+     * [Get] /posts/joinRefuse*/
+    @ResponseBody
+    @GetMapping("/joinRefuse")
+    public BaseResponse<String> PostJoinRefuse(@RequestParam(required = false) int postId, int userId) {
+
+        try{
+            String result = postProvider.PostJoinRefuse(postId,userId);
             return new BaseResponse<>(result);
         } catch(BaseException exception){
             return new BaseResponse<>((exception.getStatus()));

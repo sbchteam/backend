@@ -541,4 +541,12 @@ public class PostDao {
         this.jdbcTemplate.update(postJoinApplyQuery, postJoinApplyParams);
         return "공구참여수락완료";
     }
+
+    /*공구 참여 거절 & 취소하기*/
+    public String PostJoinRefuse(int postId,int userId) {
+        String postJoinApplyQuery = "update post_join set joinStatus=0, status=0  where post_id=? && user_id=?";
+        Object[] postJoinApplyParams = {postId,userId};
+        this.jdbcTemplate.update(postJoinApplyQuery, postJoinApplyParams);
+        return "공구참여 거절 & 취소 완료";
+    }
 }
