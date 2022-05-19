@@ -549,4 +549,38 @@ public class PostDao {
         this.jdbcTemplate.update(postJoinApplyQuery, postJoinApplyParams);
         return "공구참여 거절 & 취소 완료";
     }
+
+    /*공구 참여신청자 리스트 보기*/
+    public List<JoinList> PostJoinList(int postId,int userId) {
+        String postJoinListQuery = "" +
+                "select u.id, nick, profile_img\n" +
+                "from post p\n" +
+                "join post_join pj on p.id = pj.post_id\n" +
+                "join user u on pj.user_id = u.id\n" +
+                "where p.id=? && p.user_id=? && pj.status=1";
+        Object[] postJoinListParams = {postId,userId};
+        return this.jdbcTemplate.query(postJoinListQuery,
+                (rs, rowNum) -> new JoinList(
+                        rs.getInt("u.id"),
+                        rs.getString("nick"),
+                        rs.getString("profile_img")
+                ), postJoinListParams);
+    }
+
+    /*공구 참여자 리스트 보기*/
+    public List<JoinList> PostJoinOnlyList(int postId,int userId) {
+        String postJoinOnlyListQuery = "" +
+                "select u.id, nick, profile_img\n" +
+                "from post p\n" +
+                "join post_join pj on p.id = pj.post_id\n" +
+                "join user u on pj.user_id = u.id\n" +
+                "where p.id=? && p.user_id=? && pj.status=1 && pj.joinStatus=1";
+        Object[] postJoinOnlyListParams = {postId,userId};
+        return this.jdbcTemplate.query(postJoinOnlyListQuery,
+                (rs, rowNum) -> new JoinList(
+                        rs.getInt("u.id"),
+                        rs.getString("nick"),
+                        rs.getString("profile_img")
+                ), postJoinOnlyListParams);
+    }
 }

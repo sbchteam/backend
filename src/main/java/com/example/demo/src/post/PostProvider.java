@@ -200,4 +200,25 @@ public class PostProvider {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+
+    /** 공구 참여신청자 리스트보기*/
+    public List<JoinList> PostJoinList(int postId,int userId) throws BaseException {
+        //중복
+        try{
+            List<JoinList> joinList  = postDao.PostJoinList(postId,userId);
+            return joinList;
+        } catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+    /** 공구 참여자 리스트보기*/
+    public List<JoinList> PostJoinOnlyList(int postId,int userId) throws BaseException {
+        //중복
+        try{
+            List<JoinList> joinList = postDao.PostJoinOnlyList(postId,userId);
+            return joinList;
+        } catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
 }

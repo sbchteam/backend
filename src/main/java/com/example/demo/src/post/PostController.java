@@ -289,4 +289,23 @@ public class PostController {
             return new BaseResponse<>((exception.getStatus()));
         }
     }
+
+    /**
+     * 공구 참여자 목록 보기 API
+     * [Get] /posts/joinRefuse*/
+    @ResponseBody
+    @GetMapping("/joinlist/{postId}")
+    public BaseResponse<List<JoinList>> PostJoinList(@RequestParam(required = false) String onlyJoin, @PathVariable(value = "postId") int postId) {
+        try{
+            int userId = jwtService.getUserIdx();
+            if(onlyJoin.equals("ok")){
+                List<JoinList> result = postProvider.PostJoinOnlyList(postId,userId);
+                return new BaseResponse<>(result);
+            }
+            List<JoinList> result = postProvider.PostJoinList(postId,userId);
+            return new BaseResponse<>(result);
+        } catch(BaseException exception){
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
 }
