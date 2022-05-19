@@ -471,7 +471,7 @@ public class PostDao {
                 (rs, rowNum) -> new Category(
                         rs.getInt("Id"),
                         rs.getString("category")
-                ), null);
+                ));
     }
 
     /*등록 위치 가져오기*/
@@ -483,5 +483,54 @@ public class PostDao {
                         rs.getInt("id"),
                         rs.getString("town")
                 ), getLocationParams);
+    }
+
+    /*참여하기 버튼 누르기, 해제하기*/
+    public String PostJoin(int postId, int userId){
+
+        String text="";
+        String checkJoinQuery = "" +
+                "select EXISTS(\n" +
+                "select *\n" +
+                "from post_join pj\n" +
+                "where pj.post_id=? && pj.user_id=?) as exist;";
+        Object[] checkJoinParams = new Object[]{postId,userId};
+
+        int result= this.jdbcTemplate.queryForObject(checkJoinQuery,
+                int.class,
+                checkJoinParams);
+
+        //존재하면
+        if(result==1){
+            String checkStatusQuery = "" +
+                    "select status\n" +
+                    "from post_join pj\n" +
+                    "where pj.post_id=? && pj.user_id=?";
+            Object[] checkStatusParams = new Object[]{postId,userId};
+
+            int status= this.jdbcTemplate.queryForObject(checkStatusQuery,
+                    int.class,
+                    checkStatusParams);
+            //관심이 눌린 상태면
+            if(status==1){
+                String clearJoinQuery = "update post_join set status=0 where post_id=? && user_id=?";
+                Object[] clearJoinParams = new Object[]{postId,userId};
+                this.jdbcTemplate.update(clearJoinQuery, clearJoinParams);
+                text="참여취소";
+            }else{
+                String createJoinQuery = "update post_join set status=1 where post_id=? && user_id=?";
+                Object[] createJoinParams = new Object[]{postId,userId};
+                this.jdbcTemplate.update(createJoinQuery, createJoinParams);
+                text="참여신청";
+            }
+        }
+        else{
+            String createJoinQuery = "insert into post_join(post_id,user_id) VALUES (?,?)";
+            Object[] createJoinParams = new Object[]{postId,userId};
+            this.jdbcTemplate.update(createJoinQuery, createJoinParams);
+            text="참여신청";
+        }
+
+        return text;
     }
 }

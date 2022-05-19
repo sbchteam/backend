@@ -243,4 +243,21 @@ public class PostController {
         List<Location> location = postProvider.getLocation(userId);
         return location;
     }
+
+    /**
+     * 공구에 참여누르기/취소하기 API
+     * [Get] /posts/join/:postId*/
+    @ResponseBody
+    @GetMapping("/join/{postId}")
+    public BaseResponse<String> PostJoin(@PathVariable(value = "postId") int postId) {
+
+        try{
+            int userId = jwtService.getUserIdx();
+            String result = postProvider.PostJoin(postId,userId);
+            return new BaseResponse<>(result);
+        } catch(BaseException exception){
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+
 }
