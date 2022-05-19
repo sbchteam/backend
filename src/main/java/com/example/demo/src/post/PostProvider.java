@@ -168,11 +168,22 @@ public class PostProvider {
         }
     }
 
-    /** 작품에 관심 누르기 API*/
+    /** 공구 참여 누르기/취소하기 API*/
     public String PostJoin(int postId,int userId) throws BaseException {
         //중복
         try{
             String result = postDao.PostJoin(postId,userId);
+            return result;
+        } catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    /** 공구 참여 수락하기 API*/
+    public String PostJoinApply(int postId,int userId) throws BaseException {
+        //중복
+        try{
+            String result = postDao.PostJoinApply(postId,userId);
             return result;
         } catch (Exception exception) {
             throw new BaseException(DATABASE_ERROR);

@@ -533,4 +533,12 @@ public class PostDao {
 
         return text;
     }
+
+    /*공구 참여 수락하기*/
+    public String PostJoinApply(int postId,int userId) {
+        String postJoinApplyQuery = "update post_join set joinStatus=1  where post_id=? && user_id=?";
+        Object[] postJoinApplyParams = {postId,userId};
+        this.jdbcTemplate.update(postJoinApplyQuery, postJoinApplyParams);
+        return "공구참여수락완료";
+    }
 }

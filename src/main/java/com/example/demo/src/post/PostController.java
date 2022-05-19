@@ -260,4 +260,18 @@ public class PostController {
         }
     }
 
+    /**
+     * 공구 참여수락하기 API
+     * [Get] /posts/join/:postId*/
+    @ResponseBody
+    @GetMapping("/joinApply")
+    public BaseResponse<String> PostJoinApply(@RequestParam(required = false) int postId, int userId) {
+
+        try{
+            String result = postProvider.PostJoinApply(postId,userId);
+            return new BaseResponse<>(result);
+        } catch(BaseException exception){
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
 }
