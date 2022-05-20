@@ -568,7 +568,7 @@ public class PostDao {
             result="이미참";
         }
 
-        return "공구참여수락완료";
+        return result;
     }
 
     /*공구 참여 거절 & 취소하기*/
