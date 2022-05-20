@@ -513,10 +513,22 @@ public class PostDao {
                     checkStatusParams);
             //관심이 눌린 상태면
             if(status==1){
-                String clearJoinQuery = "update post_join set status=0 where post_id=? && user_id=?";
-                Object[] clearJoinParams = new Object[]{postId,userId};
-                this.jdbcTemplate.update(clearJoinQuery, clearJoinParams);
-                text="참여취소";
+                String checkJoinStatusQuery = "" +
+                        "select joinStatus\n" +
+                        "from post_join pj\n" +
+                        "where pj.post_id=? && pj.user_id=?";
+                Object[] checkJoinStatusParams = new Object[]{postId,userId};
+                int joinStatus= this.jdbcTemplate.queryForObject(checkJoinStatusQuery,
+                        int.class,
+                        checkJoinStatusParams);
+                if(joinStatus==0){
+                    String clearJoinQuery = "update post_join set status=0 where post_id=? && user_id=?";
+                    Object[] clearJoinParams = new Object[]{postId,userId};
+                    this.jdbcTemplate.update(clearJoinQuery, clearJoinParams);
+                    text="참여취소";
+                }else{
+                    text="취소불가";
+                }
             }else{
                 String createJoinQuery = "update post_join set status=1 where post_id=? && user_id=?";
                 Object[] createJoinParams = new Object[]{postId,userId};
