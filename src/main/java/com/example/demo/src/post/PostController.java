@@ -292,7 +292,7 @@ public class PostController {
 
     /**
      * 공구 참여자 목록 보기 API
-     * [Get] /posts/joinRefuse*/
+     * [Get] /posts/joinlist/:postId*/
     @ResponseBody
     @GetMapping("/joinlist/{postId}")
     public BaseResponse<List<JoinList>> PostJoinList(@RequestParam(required = false) String onlyJoin, @PathVariable(value = "postId") int postId) {
