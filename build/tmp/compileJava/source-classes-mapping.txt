@@ -10,6 +10,8 @@ com/example/demo/src/user/model/PostUserReq.java
  com.example.demo.src.user.model.PostUserReq
 com/example/demo/config/Constant.java
  com.example.demo.config.Constant
+com/example/demo/src/post/model/JoinList.java
+ com.example.demo.src.post.model.JoinList
 com/example/demo/src/post/model/PostInterest.java
  com.example.demo.src.post.model.PostInterest
 com/example/demo/utils/ValidationRegex.java

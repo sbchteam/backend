@@ -167,4 +167,58 @@ public class PostProvider {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+
+    /** 공구 참여 누르기/취소하기 API*/
+    public String PostJoin(int postId,int userId) throws BaseException {
+        //중복
+        try{
+            String result = postDao.PostJoin(postId,userId);
+            return result;
+        } catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    /** 공구 참여 수락하기 API*/
+    public String PostJoinApply(int postId,int userId) throws BaseException {
+        //중복
+        try{
+            String result = postDao.PostJoinApply(postId,userId);
+            return result;
+        } catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    /** 공구 참여 거절 & 취소 하기 API*/
+    public String PostJoinRefuse(int postId,int userId,String select) throws BaseException {
+        //중복
+        try{
+            String result = postDao.PostJoinRefuse(postId,userId,select);
+            return result;
+        } catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    /** 공구 참여신청자 리스트보기*/
+    public List<JoinList> PostJoinList(int postId,int userId) throws BaseException {
+        //중복
+        try{
+            List<JoinList> joinList  = postDao.PostJoinList(postId,userId);
+            return joinList;
+        } catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+    /** 공구 참여자 리스트보기*/
+    public List<JoinList> PostJoinOnlyList(int postId,int userId) throws BaseException {
+        //중복
+        try{
+            List<JoinList> joinList = postDao.PostJoinOnlyList(postId,userId);
+            return joinList;
+        } catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
 }

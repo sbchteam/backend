@@ -471,7 +471,7 @@ public class PostDao {
                 (rs, rowNum) -> new Category(
                         rs.getInt("Id"),
                         rs.getString("category")
-                ), null);
+                ));
     }
 
     /*등록 위치 가져오기*/
@@ -483,5 +483,163 @@ public class PostDao {
                         rs.getInt("id"),
                         rs.getString("town")
                 ), getLocationParams);
+    }
+
+    /*참여하기 버튼 누르기, 해제하기*/
+    public String PostJoin(int postId, int userId){
+
+        String text="";
+        String checkJoinQuery = "" +
+                "select EXISTS(\n" +
+                "select *\n" +
+                "from post_join pj\n" +
+                "where pj.post_id=? && pj.user_id=?) as exist;";
+        Object[] checkJoinParams = new Object[]{postId,userId};
+
+        int result= this.jdbcTemplate.queryForObject(checkJoinQuery,
+                int.class,
+                checkJoinParams);
+
+        //존재하면
+        if(result==1){
+            String checkStatusQuery = "" +
+                    "select status\n" +
+                    "from post_join pj\n" +
+                    "where pj.post_id=? && pj.user_id=?";
+            Object[] checkStatusParams = new Object[]{postId,userId};
+
+            int status= this.jdbcTemplate.queryForObject(checkStatusQuery,
+                    int.class,
+                    checkStatusParams);
+            //관심이 눌린 상태면
+            if(status==1){
+                String checkJoinStatusQuery = "" +
+                        "select joinStatus\n" +
+                        "from post_join pj\n" +
+                        "where pj.post_id=? && pj.user_id=?";
+                Object[] checkJoinStatusParams = new Object[]{postId,userId};
+                int joinStatus= this.jdbcTemplate.queryForObject(checkJoinStatusQuery,
+                        int.class,
+                        checkJoinStatusParams);
+                if(joinStatus==0){
+                    String clearJoinQuery = "update post_join set status=0 where post_id=? && user_id=?";
+                    Object[] clearJoinParams = new Object[]{postId,userId};
+                    this.jdbcTemplate.update(clearJoinQuery, clearJoinParams);
+                    text="참여취소";
+                }else{
+                    text="취소불가";
+                }
+            }else{
+                String createJoinQuery = "update post_join set status=1 where post_id=? && user_id=?";
+                Object[] createJoinParams = new Object[]{postId,userId};
+                this.jdbcTemplate.update(createJoinQuery, createJoinParams);
+                text="참여신청";
+            }
+        }
+        else{
+            String createJoinQuery = "insert into post_join(post_id,user_id) VALUES (?,?)";
+            Object[] createJoinParams = new Object[]{postId,userId};
+            this.jdbcTemplate.update(createJoinQuery, createJoinParams);
+            text="참여신청";
+        }
+
+        return text;
+    }
+
+    /*공구 참여 수락하기*/
+    public String PostJoinApply(int postId,int userId) {
+        String result="";
+
+        //4명 이하일때 만 수락 가능
+        String checkCntQuery = "" +
+                "select count(*) as joincnt\n" +
+                "from post_join pj\n" +
+                "where pj.post_id=? && pj.joinStatus=1";
+
+        int joinCnt= this.jdbcTemplate.queryForObject(checkCntQuery, int.class, postId);
+
+        String checkNumQuery = "" +
+                "select num\n" +
+                "from post\n" +
+                "where id=?";
+
+        int num= this.jdbcTemplate.queryForObject(checkNumQuery, int.class, postId);
+        if(joinCnt<=num-1){
+
+            String postJoinApplyQuery = "update post_join set joinStatus=1  where post_id=? && user_id=?";
+            Object[] postJoinApplyParams = {postId,userId};
+            this.jdbcTemplate.update(postJoinApplyQuery, postJoinApplyParams);
+            result="공구참여수락완료";
+            if(joinCnt==num-1){
+                String changeTranslateQuery="update post set transaction_status='deal' where id=?";
+                Object[] changeTranslateParams = new Object[]{postId};
+                this.jdbcTemplate.update(changeTranslateQuery, changeTranslateParams);
+            }
+
+        }else{
+            result="이미참";
+        }
+
+        return result;
+    }
+
+    /*공구 참여 거절 & 취소하기*/
+    public String PostJoinRefuse(int postId,int userId,String select) {
+        String checkCntQuery = "" +
+                "select count(*) as joincnt\n" +
+                "from post_join pj\n" +
+                "where pj.post_id=? && pj.joinStatus=1";
+        int joinCnt= this.jdbcTemplate.queryForObject(checkCntQuery, int.class, postId);
+
+        String checkNumQuery = "" +
+                "select num\n" +
+                "from post\n" +
+                "where id=?";
+        int num= this.jdbcTemplate.queryForObject(checkNumQuery, int.class, postId);
+
+        if(joinCnt==num && select.equals("cancel")){
+            String changeTranslateQuery="update post set transaction_status='open' where id=?";
+            Object[] changeTranslateParams = new Object[]{postId};
+            this.jdbcTemplate.update(changeTranslateQuery, changeTranslateParams);
+        }
+
+        String postJoinApplyQuery = "update post_join set joinStatus=0, status=0  where post_id=? && user_id=?";
+        Object[] postJoinApplyParams = {postId,userId};
+        this.jdbcTemplate.update(postJoinApplyQuery, postJoinApplyParams);
+        return "공구참여 거절 & 취소 완료";
+    }
+
+    /*공구 참여신청자 리스트 보기*/
+    public List<JoinList> PostJoinList(int postId,int userId) {
+        String postJoinListQuery = "" +
+                "select u.id, nick, profile_img\n" +
+                "from post p\n" +
+                "join post_join pj on p.id = pj.post_id\n" +
+                "join user u on pj.user_id = u.id\n" +
+                "where p.id=? && p.user_id=? && pj.status=1";
+        Object[] postJoinListParams = {postId,userId};
+        return this.jdbcTemplate.query(postJoinListQuery,
+                (rs, rowNum) -> new JoinList(
+                        rs.getInt("u.id"),
+                        rs.getString("nick"),
+                        rs.getString("profile_img")
+                ), postJoinListParams);
+    }
+
+    /*공구 참여자 리스트 보기*/
+    public List<JoinList> PostJoinOnlyList(int postId,int userId) {
+        String postJoinOnlyListQuery = "" +
+                "select u.id, nick, profile_img\n" +
+                "from post p\n" +
+                "join post_join pj on p.id = pj.post_id\n" +
+                "join user u on pj.user_id = u.id\n" +
+                "where p.id=? && p.user_id=? && pj.status=1 && pj.joinStatus=1";
+        Object[] postJoinOnlyListParams = {postId,userId};
+        return this.jdbcTemplate.query(postJoinOnlyListQuery,
+                (rs, rowNum) -> new JoinList(
+                        rs.getInt("u.id"),
+                        rs.getString("nick"),
+                        rs.getString("profile_img")
+                ), postJoinOnlyListParams);
     }
 }

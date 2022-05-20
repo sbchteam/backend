@@ -243,4 +243,69 @@ public class PostController {
         List<Location> location = postProvider.getLocation(userId);
         return location;
     }
+
+    /**
+     * 공구에 참여누르기/취소하기 API
+     * [Get] /posts/join/:postId*/
+    @ResponseBody
+    @GetMapping("/join/{postId}")
+    public BaseResponse<String> PostJoin(@PathVariable(value = "postId") int postId) {
+
+        try{
+            int userId = jwtService.getUserIdx();
+            String result = postProvider.PostJoin(postId,userId);
+            return new BaseResponse<>(result);
+        } catch(BaseException exception){
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+
+    /**
+     * 공구 참여수락하기 API
+     * [Get] /posts/joinApply*/
+    @ResponseBody
+    @GetMapping("/joinApply")
+    public BaseResponse<String> PostJoinApply(@RequestParam(required = false) int postId, int userId) {
+
+        try{
+            String result = postProvider.PostJoinApply(postId,userId);
+            return new BaseResponse<>(result);
+        } catch(BaseException exception){
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+
+    /**
+     * 공구 참여 거절하기/ 주최자가 참여 취소하기 API
+     * [Get] /posts/joinRefuse*/
+    @ResponseBody
+    @GetMapping("/joinRefuse")
+    public BaseResponse<String> PostJoinRefuse(@RequestParam(required = false) int postId, int userId, String select) {
+
+        try{
+            String result = postProvider.PostJoinRefuse(postId,userId, select);
+            return new BaseResponse<>(result);
+        } catch(BaseException exception){
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+
+    /**
+     * 공구 참여자 목록 보기 API
+     * [Get] /posts/joinlist/:postId*/
+    @ResponseBody
+    @GetMapping("/joinlist/{postId}")
+    public BaseResponse<List<JoinList>> PostJoinList(@RequestParam(required = false) String onlyJoin, @PathVariable(value = "postId") int postId) {
+        try{
+            int userId = jwtService.getUserIdx();
+            if(onlyJoin.equals("ok")){
+                List<JoinList> result = postProvider.PostJoinOnlyList(postId,userId);
+                return new BaseResponse<>(result);
+            }
+            List<JoinList> result = postProvider.PostJoinList(postId,userId);
+            return new BaseResponse<>(result);
+        } catch(BaseException exception){
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
 }
