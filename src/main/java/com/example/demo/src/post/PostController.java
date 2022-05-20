@@ -280,10 +280,10 @@ public class PostController {
      * [Get] /posts/joinRefuse*/
     @ResponseBody
     @GetMapping("/joinRefuse")
-    public BaseResponse<String> PostJoinRefuse(@RequestParam(required = false) int postId, int userId) {
+    public BaseResponse<String> PostJoinRefuse(@RequestParam(required = false) int postId, int userId, String select) {
 
         try{
-            String result = postProvider.PostJoinRefuse(postId,userId);
+            String result = postProvider.PostJoinRefuse(postId,userId, select);
             return new BaseResponse<>(result);
         } catch(BaseException exception){
             return new BaseResponse<>((exception.getStatus()));

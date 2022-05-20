@@ -572,7 +572,7 @@ public class PostDao {
     }
 
     /*공구 참여 거절 & 취소하기*/
-    public String PostJoinRefuse(int postId,int userId) {
+    public String PostJoinRefuse(int postId,int userId,String select) {
         String checkCntQuery = "" +
                 "select count(*) as joincnt\n" +
                 "from post_join pj\n" +
@@ -585,7 +585,7 @@ public class PostDao {
                 "where id=?";
         int num= this.jdbcTemplate.queryForObject(checkNumQuery, int.class, postId);
 
-        if(joinCnt==num){
+        if(joinCnt==num && select.equals("cancel")){
             String changeTranslateQuery="update post set transaction_status='open' where id=?";
             Object[] changeTranslateParams = new Object[]{postId};
             this.jdbcTemplate.update(changeTranslateQuery, changeTranslateParams);

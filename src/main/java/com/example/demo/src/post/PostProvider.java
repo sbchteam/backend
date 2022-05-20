@@ -191,10 +191,10 @@ public class PostProvider {
     }
 
     /** 공구 참여 거절 & 취소 하기 API*/
-    public String PostJoinRefuse(int postId,int userId) throws BaseException {
+    public String PostJoinRefuse(int postId,int userId,String select) throws BaseException {
         //중복
         try{
-            String result = postDao.PostJoinRefuse(postId,userId);
+            String result = postDao.PostJoinRefuse(postId,userId,select);
             return result;
         } catch (Exception exception) {
             throw new BaseException(DATABASE_ERROR);
