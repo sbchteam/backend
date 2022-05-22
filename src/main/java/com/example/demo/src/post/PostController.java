@@ -84,7 +84,7 @@ public class PostController {
      * 키워드 등록 api
      */
     @ResponseBody
-    @GetMapping("/keyword")
+    @PostMapping("/keyword")
     public BaseResponse<String> PostKeyword(@RequestParam(required = false) String word){
         try {
             int userId = jwtService.getUserIdx();
@@ -130,9 +130,9 @@ public class PostController {
 
     /**
      * 공구에 찜누르기/해제하기 API
-     * [Get] /posts/interest/:postId*/
+     * [Post] /posts/interest/:postId*/
     @ResponseBody
-    @GetMapping("/interest/{postId}")
+    @PostMapping("/interest/{postId}")
     public BaseResponse<PostInterest> PushPostInterest(@PathVariable(value = "postId") int postId) {
 
         try{
@@ -150,7 +150,7 @@ public class PostController {
      * deal - 거래중
      * complete - 거래완료*/
     @ResponseBody
-    @GetMapping("/{postId}/translate")
+    @PatchMapping("/{postId}/translate")
     public BaseResponse<PostDetailImg> changeTranslate(@PathVariable("postId") int postId, @RequestParam(required = false) String status){
         try {
             if(!(status.equals("open")||status.equals("deal")||status.equals("complete"))){ //다른 값 들어오면 에러
@@ -166,10 +166,10 @@ public class PostController {
 
     /**
      * 공구 게시글 신고하기 API
-     * [GET] /posts/report/:postId
+     * [Post] /posts/report/:postId
      */
     @ResponseBody
-    @GetMapping("report/{postId}")
+    @PostMapping("report/{postId}")
     public BaseResponse<PostInterest> PostReport(@PathVariable(value = "postId") int postId){
         try {
             int userId = jwtService.getUserIdx();
@@ -246,9 +246,9 @@ public class PostController {
 
     /**
      * 공구에 참여누르기/취소하기 API
-     * [Get] /posts/join/:postId*/
+     * [Post] /posts/join/:postId*/
     @ResponseBody
-    @GetMapping("/join/{postId}")
+    @PostMapping("/join/{postId}")
     public BaseResponse<String> PostJoin(@PathVariable(value = "postId") int postId) {
 
         try{
@@ -262,9 +262,9 @@ public class PostController {
 
     /**
      * 공구 참여수락하기 API
-     * [Get] /posts/joinApply*/
+     * [Patch] /posts/joinApply*/
     @ResponseBody
-    @GetMapping("/joinApply")
+    @PatchMapping("/joinApply")
     public BaseResponse<String> PostJoinApply(@RequestParam(required = false) int postId, int userId) {
 
         try{
@@ -277,9 +277,9 @@ public class PostController {
 
     /**
      * 공구 참여 거절하기/ 주최자가 참여 취소하기 API
-     * [Get] /posts/joinRefuse*/
+     * [Patch] /posts/joinRefuse*/
     @ResponseBody
-    @GetMapping("/joinRefuse")
+    @PatchMapping("/joinRefuse")
     public BaseResponse<String> PostJoinRefuse(@RequestParam(required = false) int postId, int userId, String select) {
 
         try{
