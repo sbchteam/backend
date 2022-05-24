@@ -187,7 +187,7 @@ public class PostDao {
 
 
     //date처리, createdAt처리리
-   public PostDetail getPost(int postId, int userId) {
+    public PostDetail getPost(int postId, int userId) {
         String getWorkQuery =
                 "select p.id,p.user_id,u.profile_img,u.nick,town, category,title,price,date,num,content,transaction_status,ifnull(pi.status,0) as interestStatus,\n" +
                 "       case\n" +
@@ -641,5 +641,61 @@ public class PostDao {
                         rs.getString("nick"),
                         rs.getString("profile_img")
                 ), postJoinOnlyListParams);
+    }
+
+    /*댓글 등록하기*/
+    public PostCommentList createComment(PostComment postComment, int postId, int userId) {
+        String getCreateCommentQuery = "insert into comment (post_id, parent_id, user_id, " +
+                "content, status) values (?,?,?,?,?)";
+        Object[] createCommentParams = {postId, postComment.getParentId(), userId,
+                postComment.getContent(), postComment.getStatus()};
+        this.jdbcTemplate.update(getCreateCommentQuery, createCommentParams);
+        return null;
+    }
+
+    /*댓글 조회*/
+    public List<PostCommentList> postCommentLists(int postId) {
+        String commentListsQuery =
+                "select c.user_id, u.nick, c.content, c.parent_id\n, case\n" +
+                        "    when TIMESTAMPDIFF(hour, c.created_at, current_timestamp()) < 24\n" +
+                        "    then case\n" +
+                        "    when TIMESTAMPDIFF(hour, c.created_at, current_timestamp()) < 1\n" +
+                        "    then concat(timestampdiff(minute, c.created_at, current_timestamp()), ' 분전')\n" +
+                        "    when TIMESTAMPDIFF(hour, c.created_at, current_timestamp()) >= 1\n" +
+                        "    then concat(timestampdiff(hour, c.created_at, current_timestamp()), ' 시간전')\n" +
+                        "    end\n" +
+                        "    when TIMESTAMPDIFF(hour, c.created_at, current_timestamp()) < 48\n" +
+                        "    then '어제'\n" +
+                        "    when TIMESTAMPDIFF(hour, c.created_at, current_timestamp()) < 72\n" +
+                        "    then '그저께'\n" +
+                        "    else concat(-datediff(c.created_at, current_timestamp()), ' 일전')\n" +
+                        "    end\n" +
+                        "    as timediff\n" +
+                        "from user u join comment c on u.id=c.user_id\n" +
+                        "where c.post_id=? && c.status=1\n" +
+                        "order by c.parent_id, c.id ASC;";
+        int getCommentListsParams = postId;
+        return this.jdbcTemplate.query(commentListsQuery,
+                (rs, rowNum) -> new PostCommentList(
+                        rs.getInt("c.user_id"),
+                        rs.getInt("c.parent_id"),
+                        rs.getString("u.nick"),
+                        rs.getString("c.content"),
+                        rs.getString("timediff")
+                ), getCommentListsParams);
+    }
+
+    /*댓글 수정하기*/
+    public void updateComment(PostComment postComment, int commentId, int postId, int userId) {
+        String updateCommentQuery = "update comment set content=? where id=? && user_id=? && post_id=?";
+        Object[] updateCommentParams = {postComment.getContent(), commentId, userId, postId};
+        this.jdbcTemplate.update(updateCommentQuery, updateCommentParams);
+    }
+
+    /*댓글 삭제하기*/
+    public void deleteComment(int commentId, int postId, int userId) {
+        String deleteCommentQuery = "update comment set status=0 where id=? && user_id=? && post_id=?";
+        Object[] deleteCommentParams = {commentId, userId, postId};
+        this.jdbcTemplate.update(deleteCommentQuery, deleteCommentParams);
     }
 }
