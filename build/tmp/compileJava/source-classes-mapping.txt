@@ -70,6 +70,8 @@ com/example/demo/src/user/UserService.java
  com.example.demo.src.user.UserService
 com/example/demo/src/user/model/UserReviews.java
  com.example.demo.src.user.model.UserReviews
+com/example/demo/src/post/model/PostCommentList.java
+ com.example.demo.src.post.model.PostCommentList
 com/example/demo/src/post/model/PostList.java
  com.example.demo.src.post.model.PostList
 com/example/demo/src/user/model/AddressSearchList.java
@@ -84,5 +86,7 @@ com/example/demo/src/user/model/AddressInfo.java
  com.example.demo.src.user.model.AddressInfo
 com/example/demo/src/user/UserProvider.java
  com.example.demo.src.user.UserProvider
+com/example/demo/src/post/model/PostComment.java
+ com.example.demo.src.post.model.PostComment
 com/example/demo/src/user/model/UserEvaluation.java
  com.example.demo.src.user.model.UserEvaluation
