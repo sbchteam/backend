@@ -221,4 +221,14 @@ public class PostProvider {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+
+    /** 댓글 조회 API*/
+    public List<PostCommentList> postCommentLists(int postId) throws BaseException{
+        try {
+            List<PostCommentList> postCommentList = postDao.postCommentLists(postId);
+            return postCommentList;
+        } catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
 }
