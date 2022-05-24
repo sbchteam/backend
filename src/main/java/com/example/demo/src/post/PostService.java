@@ -2,9 +2,7 @@ package com.example.demo.src.post;
 
 import com.example.demo.config.BaseException;
 import com.example.demo.config.secret.Secret;
-import com.example.demo.src.post.model.Post;
-import com.example.demo.src.post.model.PostDetail;
-import com.example.demo.src.post.model.PostDetailImg;
+import com.example.demo.src.post.model.*;
 import com.example.demo.src.user.UserDao;
 import com.example.demo.src.user.UserProvider;
 import com.example.demo.src.user.model.*;
@@ -83,4 +81,23 @@ public class PostService {
         postDao.deletePost(postId, userId);
     }
 
+    /** 댓글 작성 API*/
+    public PostCommentList createComment(PostComment postComment, int postId, int userId) throws BaseException {
+        try {
+            PostCommentList postCommentList = postDao.createComment(postComment, postId, userId);
+            return postCommentList;
+        } catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    /** 댓글 수정 API*/
+    public void updateComment(PostComment postComment, int commentId, int postId, int userId) throws BaseException {
+        postDao.updateComment(postComment, commentId, postId, userId);
+    }
+
+    /** 댓글 삭제 API*/
+    public void deleteComment(int commentId, int postId, int userId) {
+        postDao.deleteComment(commentId, postId, userId);
+    }
 }
