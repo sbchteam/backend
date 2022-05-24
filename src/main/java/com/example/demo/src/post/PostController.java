@@ -308,4 +308,59 @@ public class PostController {
             return new BaseResponse<>((exception.getStatus()));
         }
     }
+
+    /**
+     * 댓글 작성 API
+     * [POST] /posts/comment
+     */
+    @ResponseBody
+    @PostMapping("/comment")
+    public BaseResponse<PostCommentList> createComment(@RequestBody PostComment postComment, int postId) {
+        try {
+            int userId = jwtService.getUserIdx();
+            PostCommentList postCommentList = postService.createComment(postComment, postId, userId);
+            return new BaseResponse<>(postCommentList);
+        } catch (BaseException exception) {
+            return new BaseResponse<>(exception.getStatus());
+        }
+    }
+
+    /**
+     * 댓글 조회 API
+     * [GET] /posts/comment
+     */
+    @ResponseBody
+    @GetMapping("/comment")
+    public BaseResponse<List<PostCommentList>> postCommentList(int postId) {
+        try {
+            List<PostCommentList> result = postProvider.postCommentLists(postId);
+            return new BaseResponse<>(result);
+        } catch (BaseException exception) {
+            return new BaseResponse<>(exception.getStatus());
+        }
+    }
+
+    /**
+     * 댓글 수정 API
+     * [PATCH] /posts/comment
+     */
+    @ResponseBody
+    @PatchMapping("/comment")
+    public String updateComment(@RequestBody PostComment postComment, int commentId, int postId) throws Exception {
+        int userId = jwtService.getUserIdx();
+        postService.updateComment(postComment, commentId, postId, userId);
+        return "redirect:/comment";
+    }
+
+    /**
+     * 댓글 삭제 API
+     * [DELETE] /posts/comment
+     */
+    @ResponseBody
+    @DeleteMapping("/comment")
+    public String deleteComment (int postId, int commentId) throws Exception {
+        int userId = jwtService.getUserIdx();
+        postService.deleteComment(commentId, postId, userId);
+        return "redirect:/comment";
+    }
 }
