@@ -82,9 +82,9 @@ public class PostService {
     }
 
     /** 댓글 작성 API*/
-    public PostCommentList createComment(PostComment postComment, int postId, int userId) throws BaseException {
+    public PostCommentList createComment(PostComment postComment, int userId) throws BaseException {
         try {
-            PostCommentList postCommentList = postDao.createComment(postComment, postId, userId);
+            PostCommentList postCommentList = postDao.createComment(postComment, userId);
             return postCommentList;
         } catch (Exception exception) {
             throw new BaseException(DATABASE_ERROR);
@@ -92,12 +92,12 @@ public class PostService {
     }
 
     /** 댓글 수정 API*/
-    public void updateComment(PostComment postComment, int commentId, int postId, int userId) throws BaseException {
-        postDao.updateComment(postComment, commentId, postId, userId);
+    public void updateComment(PostComment postComment, int commentId, int userId) throws BaseException {
+        postDao.updateComment(postComment, commentId, userId);
     }
 
     /** 댓글 삭제 API*/
-    public void deleteComment(int commentId, int postId, int userId) {
-        postDao.deleteComment(commentId, postId, userId);
+    public void deleteComment(int commentId, int userId) {
+        postDao.deleteComment(commentId, userId);
     }
 }

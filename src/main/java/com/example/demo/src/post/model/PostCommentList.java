@@ -8,7 +8,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class PostCommentList {
-
+    private int commentId;
     private int userId;
     private int parentId;
     private String nick;

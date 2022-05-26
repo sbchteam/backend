@@ -54,15 +54,16 @@ public class PostDao {
             "    select post_id, count(*) as interestNum\n" +
             "    from post_interest\n" +
             "    group by post_id\n" +
-            ") incnt on p.id=incnt.post_id\n";
+            ") incnt on p.id=incnt.post_id\n" +
+            "left join user_location ul on p.location_id =ul.id\n";
 
 
-    public List<PostList> getPosts(int userId) {
+    public List<PostList> getPosts(int userId,String town) {
         String getPostsQuery ="" +
                 "select *\n" +
                 "from(\n" +
                 getPostsquery+
-                "where p.status=1 && TIMESTAMPDIFF(minute , now(),p.date)>0 && p.user_id not in (\n" +
+                "where p.status=1 && town=? && TIMESTAMPDIFF(minute , now(),p.date)>0 && p.user_id not in (\n" +
                 "    select user_id\n" +
                 "    from user_block\n" +
                 "    where blocker_id=?\n" +
@@ -71,6 +72,7 @@ public class PostDao {
                 "order by plist.created_at desc;";
 
         int getPostsParams = userId;
+        String keyword='%'+town+'%';
         return this.jdbcTemplate.query(getPostsQuery,
                 (rs, rowNum) -> new PostList(
                         rs.getInt("id"),
@@ -83,15 +85,15 @@ public class PostDao {
                         rs.getString("timediff"),
                         rs.getString("img")
                 ),
-                getPostsParams, getPostsParams,getPostsParams
+                getPostsParams, getPostsParams,town,getPostsParams
         );
     }
-    public List<PostList> getPostsInterest(int userId) {
+    public List<PostList> getPostsInterest(int userId,String town) {
         String getPostsInterestQuery =
                 "select *\n" +
                 "from(\n" +
                 getPostsquery+
-                "where p.status=1 && TIMESTAMPDIFF(minute , now(),p.date)>0 && p.user_id not in (\n" +
+                "where p.status=1 && town=? && TIMESTAMPDIFF(minute , now(),p.date)>0 && p.user_id not in (\n" +
                 "    select user_id\n" +
                 "    from user_block\n" +
                 "    where blocker_id=?\n" +
@@ -99,6 +101,7 @@ public class PostDao {
                 "group by p.id) plist\n " +
                 "order by plist.interest_num desc";
         int getPostsInterestParams = userId;
+        String keyword='%'+town+'%';
         SimpleDateFormat dateFormat= new SimpleDateFormat("yyyy년 MM월 dd일");
         return this.jdbcTemplate.query(getPostsInterestQuery,
                 (rs, rowNum) -> new PostList(
@@ -112,17 +115,17 @@ public class PostDao {
                         rs.getString("timediff"),
                         rs.getString("img")
                 ),
-                getPostsInterestParams, getPostsInterestParams,getPostsInterestParams
+                getPostsInterestParams, getPostsInterestParams,town,getPostsInterestParams
         );
     }
 
-    public List<PostList> getPostsOngoing(int userId) {
+    public List<PostList> getPostsOngoing(int userId,String town) {
         String getPostsOngoingQuery =
                 "select *\n" +
                 "from(\n" +
                 getPostsquery+
                 "where p.transaction_status\n" +
-                "not in ('complete') && p.status=1 && TIMESTAMPDIFF(minute , now(),p.date)>0 && p.user_id not in (\n" +
+                "not in ('complete') && p.status=1 && town=? && TIMESTAMPDIFF(minute , now(),p.date)>0 && p.user_id not in (\n" +
                 "    select user_id\n" +
                 "    from user_block\n" +
                 "    where blocker_id=?\n" +
@@ -130,6 +133,7 @@ public class PostDao {
                 "group by p.id) plist\n" +
                 "order by plist.created_at desc;";
         int getPostsOngoingParams = userId;
+        String keyword='%'+town+'%';
         SimpleDateFormat dateFormat= new SimpleDateFormat("yyyy년 MM월 dd일");
         return this.jdbcTemplate.query(getPostsOngoingQuery,
                 (rs, rowNum) -> new PostList(
@@ -143,7 +147,37 @@ public class PostDao {
                         rs.getString("timediff"),
                         rs.getString("img")
                 ),
-                getPostsOngoingParams, getPostsOngoingParams,getPostsOngoingParams
+                getPostsOngoingParams, getPostsOngoingParams,town,getPostsOngoingParams
+        );
+    }
+    public List<PostList> getCategoryPosts(int userId, int categoryId,String town) {
+        String getPostsQuery ="" +
+                "select *\n" +
+                "from(\n" +
+                getPostsquery+
+                "where p.status=1 && p.category_id=? && town=? && TIMESTAMPDIFF(minute , now(),p.date)>0 && p.user_id not in (\n" +
+                "    select user_id\n" +
+                "    from user_block\n" +
+                "    where blocker_id=?\n" +
+                ")\n"+
+                "group by p.id) plist\n" +
+                "order by plist.created_at desc;";
+
+        int getPostsParams = userId;
+        String keyword='%'+town+'%';
+        return this.jdbcTemplate.query(getPostsQuery,
+                (rs, rowNum) -> new PostList(
+                        rs.getInt("id"),
+                        rs.getString("title"),
+                        rs.getString("category"),
+                        rs.getInt("price"),
+                        rs.getString("transaction_status"),
+                        rs.getInt("interest_status"),
+                        rs.getInt("interest_num"),
+                        rs.getString("timediff"),
+                        rs.getString("img")
+                ),
+                getPostsParams, getPostsParams,categoryId,town,getPostsParams
         );
     }
     //공구 검색 api
@@ -644,11 +678,11 @@ public class PostDao {
     }
 
     /*댓글 등록하기*/
-    public PostCommentList createComment(PostComment postComment, int postId, int userId) {
+    public PostCommentList createComment(PostComment postComment, int userId) {
         String getCreateCommentQuery = "insert into comment (post_id, parent_id, user_id, " +
-                "content, status) values (?,?,?,?,?)";
-        Object[] createCommentParams = {postId, postComment.getParentId(), userId,
-                postComment.getContent(), postComment.getStatus()};
+                "content) values (?,?,?,?)";
+        Object[] createCommentParams = {postComment.getPostId(), postComment.getParentId(), userId,
+                postComment.getContent()};
         this.jdbcTemplate.update(getCreateCommentQuery, createCommentParams);
         return null;
     }
@@ -656,7 +690,7 @@ public class PostDao {
     /*댓글 조회*/
     public List<PostCommentList> postCommentLists(int postId) {
         String commentListsQuery =
-                "select c.user_id, u.nick, c.content, c.parent_id\n, case\n" +
+                "select c.id,c.user_id, u.nick, c.content, c.parent_id\n, case\n" +
                         "    when TIMESTAMPDIFF(hour, c.created_at, current_timestamp()) < 24\n" +
                         "    then case\n" +
                         "    when TIMESTAMPDIFF(hour, c.created_at, current_timestamp()) < 1\n" +
@@ -677,6 +711,7 @@ public class PostDao {
         int getCommentListsParams = postId;
         return this.jdbcTemplate.query(commentListsQuery,
                 (rs, rowNum) -> new PostCommentList(
+                        rs.getInt("c.id"),
                         rs.getInt("c.user_id"),
                         rs.getInt("c.parent_id"),
                         rs.getString("u.nick"),
@@ -686,16 +721,16 @@ public class PostDao {
     }
 
     /*댓글 수정하기*/
-    public void updateComment(PostComment postComment, int commentId, int postId, int userId) {
-        String updateCommentQuery = "update comment set content=? where id=? && user_id=? && post_id=?";
-        Object[] updateCommentParams = {postComment.getContent(), commentId, userId, postId};
+    public void updateComment(PostComment postComment, int commentId, int userId) {
+        String updateCommentQuery = "update comment set content=? where id=? && user_id=?";
+        Object[] updateCommentParams = {postComment.getContent(), commentId, userId};
         this.jdbcTemplate.update(updateCommentQuery, updateCommentParams);
     }
 
     /*댓글 삭제하기*/
-    public void deleteComment(int commentId, int postId, int userId) {
-        String deleteCommentQuery = "update comment set status=0 where id=? && user_id=? && post_id=?";
-        Object[] deleteCommentParams = {commentId, userId, postId};
+    public void deleteComment(int commentId, int userId) {
+        String deleteCommentQuery = "update comment set status=0 where id=? && user_id=?";
+        Object[] deleteCommentParams = {commentId, userId};
         this.jdbcTemplate.update(deleteCommentQuery, deleteCommentParams);
     }
 }
