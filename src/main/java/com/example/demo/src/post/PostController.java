@@ -45,19 +45,36 @@ public class PostController {
      * 예외 - 최신순 조회*/
     @ResponseBody
     @GetMapping("")
-    public BaseResponse<List<PostList>> getPosts(@RequestParam(required = false) String sort){
+    public BaseResponse<List<PostList>> getPosts(@RequestParam(required = false) String sort, String town){
         try {
             int userId = jwtService.getUserIdx();
             if (sort.equals("interest")) {
-                List<PostList> postLists = postProvider.getPostsInterest(userId);
+                List<PostList> postLists = postProvider.getPostsInterest(userId,town);
                 return new BaseResponse<>(postLists);
             }else if(sort.equals("ongoing")){
-                List<PostList> postLists = postProvider.getPostsOngoing(userId);
+                List<PostList> postLists = postProvider.getPostsOngoing(userId,town);
                 return new BaseResponse<>(postLists);
             }else{
-                List<PostList> postLists = postProvider.getPosts(userId);
+                List<PostList> postLists = postProvider.getPosts(userId,town);
                 return new BaseResponse<>(postLists);
             }
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        }
+
+    }
+    /**
+     * 공구 목록 조회 api
+     * interest - 관심 많은 순 조회
+     * ongoing - 거래 완료된 공구를 제외하여 조회
+     * 예외 - 최신순 조회*/
+    @ResponseBody
+    @GetMapping("/sort/{categoryId}")
+    public BaseResponse<List<PostList>> getCategoryPosts(@PathVariable("categoryId") int categoryId, String town){
+        try {
+            int userId = jwtService.getUserIdx();
+            List<PostList> postLists = postProvider.getCategoryPosts(userId,categoryId,town);
+            return new BaseResponse<>(postLists);
         } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));
         }
@@ -315,10 +332,10 @@ public class PostController {
      */
     @ResponseBody
     @PostMapping("/comment")
-    public BaseResponse<PostCommentList> createComment(@RequestBody PostComment postComment, int postId) {
+    public BaseResponse<PostCommentList> createComment(@RequestBody PostComment postComment) {
         try {
             int userId = jwtService.getUserIdx();
-            PostCommentList postCommentList = postService.createComment(postComment, postId, userId);
+            PostCommentList postCommentList = postService.createComment(postComment, userId);
             return new BaseResponse<>(postCommentList);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
@@ -330,8 +347,8 @@ public class PostController {
      * [GET] /posts/comment
      */
     @ResponseBody
-    @GetMapping("/comment")
-    public BaseResponse<List<PostCommentList>> postCommentList(int postId) {
+    @GetMapping("/comment/{postId}")
+    public BaseResponse<List<PostCommentList>> postCommentList(@PathVariable(value = "postId") int postId) {
         try {
             List<PostCommentList> result = postProvider.postCommentLists(postId);
             return new BaseResponse<>(result);
@@ -345,10 +362,10 @@ public class PostController {
      * [PATCH] /posts/comment
      */
     @ResponseBody
-    @PatchMapping("/comment")
-    public String updateComment(@RequestBody PostComment postComment, int commentId, int postId) throws Exception {
+    @PatchMapping("/comment/{commentId}")
+    public String updateComment(@RequestBody PostComment postComment,@PathVariable(value = "commentId") int commentId) throws Exception {
         int userId = jwtService.getUserIdx();
-        postService.updateComment(postComment, commentId, postId, userId);
+        postService.updateComment(postComment, commentId, userId);
         return "redirect:/comment";
     }
 
@@ -357,10 +374,10 @@ public class PostController {
      * [DELETE] /posts/comment
      */
     @ResponseBody
-    @DeleteMapping("/comment")
-    public String deleteComment (int postId, int commentId) throws Exception {
+    @DeleteMapping("/comment/{commentId}")
+    public String deleteComment (@PathVariable(value = "commentId") int commentId) throws Exception {
         int userId = jwtService.getUserIdx();
-        postService.deleteComment(commentId, postId, userId);
+        postService.deleteComment(commentId, userId);
         return "redirect:/comment";
     }
 }

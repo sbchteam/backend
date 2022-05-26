@@ -32,9 +32,9 @@ public class PostProvider {
     }
 
     /** 공구 목록 조회 API*/
-    public List<PostList> getPostsInterest(int userId) throws BaseException{
+    public List<PostList> getPostsInterest(int userId,String town) throws BaseException{
         try{
-            List<PostList> postLists = postDao.getPostsInterest(userId);
+            List<PostList> postLists = postDao.getPostsInterest(userId,town);
             return postLists;
         }
         catch (Exception exception) {
@@ -42,9 +42,9 @@ public class PostProvider {
         }
     }
 
-    public List<PostList> getPostsOngoing(int userId) throws BaseException{
+    public List<PostList> getPostsOngoing(int userId,String town) throws BaseException{
         try{
-            List<PostList> postLists = postDao.getPostsOngoing(userId);
+            List<PostList> postLists = postDao.getPostsOngoing(userId,town);
             return postLists;
         }
         catch (Exception exception) {
@@ -52,15 +52,25 @@ public class PostProvider {
         }
     }
 
-    public List<PostList> getPosts(int userId) throws BaseException{
+    public List<PostList> getPosts(int userId,String town) throws BaseException{
         try{
-            List<PostList> postLists = postDao.getPosts(userId);
+            List<PostList> postLists = postDao.getPosts(userId,town);
             return postLists;
         }
         catch (Exception exception) {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+    public List<PostList> getCategoryPosts(int userId,int categoryId,String town) throws BaseException{
+        try{
+            List<PostList> postLists = postDao.getCategoryPosts(userId,categoryId,town);
+            return postLists;
+        }
+        catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
     /** 공구 검색 api*/
     public List<PostList> getPostSearch(int userId,String word) throws BaseException{
         try{
