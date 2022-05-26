@@ -64,10 +64,8 @@ public class PostController {
 
     }
     /**
-     * 공구 목록 조회 api
-     * interest - 관심 많은 순 조회
-     * ongoing - 거래 완료된 공구를 제외하여 조회
-     * 예외 - 최신순 조회*/
+     * 공구 목록 카테고리별 조회 api
+     * */
     @ResponseBody
     @GetMapping("/sort/{categoryId}")
     public BaseResponse<List<PostList>> getCategoryPosts(@PathVariable("categoryId") int categoryId, String town){
