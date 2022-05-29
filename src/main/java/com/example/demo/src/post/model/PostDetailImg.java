@@ -23,6 +23,7 @@ public class PostDetailImg {
     private String title;
     private int price;
     private Timestamp date; //수정할수있음
+    private int joinNum;
     private int num;
     private String content;
     private String transactionStatus;
@@ -41,6 +42,7 @@ public class PostDetailImg {
         this.setTitle(postDetail.getTitle());
         this.setPrice(postDetail.getPrice());
         this.setDate(postDetail.getDate());
+        this.setJoinNum(postDetail.getJoinNum());
         this.setNum(postDetail.getNum());
         this.setContent(postDetail.getContent());
         this.setTransactionStatus(postDetail.getTransactionStatus());

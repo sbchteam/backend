@@ -23,6 +23,7 @@ public class PostDetail {
     private String title;
     private int price;
     private Timestamp date; //수정할수있음
+    private int joinNum;
     private int num;
     private String content;
     private String transactionStatus;

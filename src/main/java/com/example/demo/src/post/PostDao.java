@@ -223,31 +223,33 @@ public class PostDao {
     //date처리, createdAt처리리
     public PostDetail getPost(int postId, int userId) {
         String getWorkQuery =
-                "select p.id,p.user_id,u.profile_img,u.nick,town, category,title,price,date,num,content,transaction_status,ifnull(pi.status,0) as interestStatus,\n" +
-                "       case\n" +
-                "           when TIMESTAMPDIFF(hour, p.created_at, current_timestamp()) < 24\n" +
-                "               then case\n" +
-                "                        when TIMESTAMPDIFF(hour, p.created_at, current_timestamp()) < 1\n" +
-                "                            then concat(timestampdiff(minute, p.created_at, current_timestamp()), ' 분전')\n" +
-                "                        when TIMESTAMPDIFF(hour, p.created_at, current_timestamp()) >= 1\n" +
-                "                            then concat(timestampdiff(hour, p.created_at, current_timestamp()), ' 시간전')\n" +
-                "               end\n" +
-                "           when TIMESTAMPDIFF(hour, p.created_at, current_timestamp()) < 48\n" +
-                "               then '어제'\n" +
-                "           when TIMESTAMPDIFF(hour, p.created_at, current_timestamp()) < 72\n" +
-                "               then '그저께'\n" +
-                "           else concat(-datediff(p.created_at, current_timestamp()), ' 일전')\n" +
-                "        end    as created_at\n" +
-                "from post p\n" +
-                "join user u\n" +
-                "on p.user_id = u.id\n" +
-                "join user_location ul\n" +
-                "on p.location_id = ul.id\n" +
-                "join category c\n" +
-                "on p.category_id = c.id\n" +
-                "left join post_interest pi\n" +
-                "on p.id = pi.post_id && pi.user_id=?\n" +
-                "where p.id=?\n";
+                "select p.id,p.user_id,u.profile_img,u.nick,town, category,title,price,date,count(pj.id) as joinNum,num,content,transaction_status,ifnull(pi.status,0) as interestStatus,\n" +
+                        "       case\n" +
+                        "           when TIMESTAMPDIFF(hour, p.created_at, current_timestamp()) < 24\n" +
+                        "               then case\n" +
+                        "                        when TIMESTAMPDIFF(hour, p.created_at, current_timestamp()) < 1\n" +
+                        "                            then concat(timestampdiff(minute, p.created_at, current_timestamp()), ' 분전')\n" +
+                        "                        when TIMESTAMPDIFF(hour, p.created_at, current_timestamp()) >= 1\n" +
+                        "                            then concat(timestampdiff(hour, p.created_at, current_timestamp()), ' 시간전')\n" +
+                        "               end\n" +
+                        "           when TIMESTAMPDIFF(hour, p.created_at, current_timestamp()) < 48\n" +
+                        "               then '어제'\n" +
+                        "           when TIMESTAMPDIFF(hour, p.created_at, current_timestamp()) < 72\n" +
+                        "               then '그저께'\n" +
+                        "           else concat(-datediff(p.created_at, current_timestamp()), ' 일전')\n" +
+                        "        end    as created_at\n" +
+                        "from post p\n" +
+                        "join user u\n" +
+                        "on p.user_id = u.id\n" +
+                        "join user_location ul\n" +
+                        "on p.location_id = ul.id\n" +
+                        "join category c\n" +
+                        "on p.category_id = c.id\n" +
+                        "left join post_interest pi\n" +
+                        "on p.id = pi.post_id && pi.user_id=?\n" +
+                        "left join post_join pj\n" +
+                        "on p.id = pj.post_id\n" +
+                        "where p.id=?";
         int getPostParams = postId;
         int getPostParams2 = userId;
        SimpleDateFormat dateFormat= new SimpleDateFormat("MM월 dd일");
@@ -262,6 +264,7 @@ public class PostDao {
                         rs.getString("title"),
                         rs.getInt("price"),
                         rs.getTimestamp("date"),
+                        rs.getInt("joinNum"),
                         rs.getInt("num"),
                         rs.getString("content"),
                         rs.getString("transaction_status"),
