@@ -99,7 +99,7 @@ public class PostController {
      * 키워드 등록 api
      */
     @ResponseBody
-    @PostMapping("/keyword")
+    @GetMapping("/keyword")
     public BaseResponse<String> PostKeyword(@RequestParam(required = false) String word){
         try {
             int userId = jwtService.getUserIdx();
