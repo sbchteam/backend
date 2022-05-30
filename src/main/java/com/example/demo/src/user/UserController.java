@@ -170,7 +170,7 @@ public class UserController {
      * /users/search/choice
      * 입력받을 값 - region1, 2, 3*/
     @ResponseBody
-    @PostMapping("/location/choice")
+    @GetMapping("/location/choice")
     public BaseResponse<UserAddress> UserAddressEnroll(@RequestParam(required = false) String region1, String region2, String region3) {
         try {
             int userId = jwtService.getUserIdx();
@@ -186,7 +186,7 @@ public class UserController {
      * /users/location/certify
      * 입력받을 값 - 현재 유저의 좌표와 인증할 위치정보id*/
     @ResponseBody
-    @PatchMapping("/location/certify")
+    @GetMapping("/location/certify")
     public BaseResponse<UserAddress> UserAddressCertify(@RequestParam(required = false) String longi, String lati,int locationId) {
         try {
             int userId = jwtService.getUserIdx();
@@ -202,7 +202,7 @@ public class UserController {
      * /users/location/now
      * 입력받을 값 - 현재 유저의 좌표와 인증할 위치정보id*/
     @ResponseBody
-    @PostMapping("/location/now")
+    @GetMapping("/location/now")
     public BaseResponse<UserAddress> UserAddressNow(@RequestParam(required = false) String longi, String lati) {
         try {
             int userId = jwtService.getUserIdx();
@@ -325,10 +325,10 @@ public class UserController {
 
     /**
      * 유저 차단하기 API
-     * [Post] /users/block/:userId
+     * [Get] /users/block/:userId
      */
     @ResponseBody
-    @PostMapping("block/{userId}")
+    @GetMapping("block/{userId}")
     public BaseResponse<UserBlock> UserBlock(@PathVariable(value = "userId") int blockUserId){
         try {
             int userId = jwtService.getUserIdx();
