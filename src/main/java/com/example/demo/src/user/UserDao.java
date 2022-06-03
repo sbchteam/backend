@@ -66,7 +66,7 @@ public class UserDao {
         String getUserQuery = "" +
                 "select u.id,nick,name,phone,profile_img,avg(uc.score) as credibility_score\n" +
                 "from user u\n" +
-                "join user_credibility uc on u.id = uc.user_id\n" +
+                "left join user_credibility uc on u.id = uc.user_id\n" +
                 "where u.id=?\n" +
                 "group by u.id";
         int getUserParams = userId;
