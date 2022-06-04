@@ -195,14 +195,27 @@ public class UserDao {
 
     }
     public UserAddress createUserAddress(String region1, String region2, String region3, int userId){
-        String createUserAddressQuery = "insert into user_location (user_id, province, city, town) VALUES (?,?,?,?)";
-        Object[] createUserAddressParams = new Object[]{userId,region1,region2,region3};
-        this.jdbcTemplate.update(createUserAddressQuery, createUserAddressParams);
+        UserAddress userAddress;
+        //위치 등록 개수 확인
+        String checkLocationQuery = "" +
+                "select count(*)\n" +
+                "from user_location\n" +
+                "where user_id=?";
+        int locCnt= this.jdbcTemplate.queryForObject(checkLocationQuery,
+                int.class,
+                userId);
 
-        String lastInsertIdQuery = "select last_insert_id()";
-        int locationId=this.jdbcTemplate.queryForObject(lastInsertIdQuery,int.class);
+        if(locCnt<2){
+            String createUserAddressQuery = "insert into user_location (user_id, province, city, town) VALUES (?,?,?,?)";
+            Object[] createUserAddressParams = new Object[]{userId,region1,region2,region3};
+            this.jdbcTemplate.update(createUserAddressQuery, createUserAddressParams);
+            String lastInsertIdQuery = "select last_insert_id()";
+            int locationId=this.jdbcTemplate.queryForObject(lastInsertIdQuery,int.class);
+            userAddress=getUserAddress(locationId);
+        }else{
+           userAddress=new UserAddress();
+        }
 
-        UserAddress userAddress=getUserAddress(locationId);
         return userAddress;
     }
 
