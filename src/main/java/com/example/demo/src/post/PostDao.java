@@ -248,7 +248,7 @@ public class PostDao {
                         "left join post_interest pi\n" +
                         "on p.id = pi.post_id && pi.user_id=?\n" +
                         "left join post_join pj\n" +
-                        "on p.id = pj.post_id\n" +
+                        "on p.id = pj.post_id && pj.joinStatus=1\n" +
                         "where p.id=?";
         int getPostParams = postId;
         int getPostParams2 = userId;
