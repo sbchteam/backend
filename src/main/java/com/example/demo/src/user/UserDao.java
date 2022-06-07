@@ -206,7 +206,6 @@ public class UserDao {
                 userId);
 
         if(locCnt<2){
-            String createUserAddressQuery = "insert into user_location (user_id, province, city, town) VALUES (?,?,?,?)";
             String createAddressQuery="INSERT INTO user_location (user_id,province, city,town) SELECT ?, ?, ?, ?\n" +
                     "WHERE NOT EXISTS (SELECT * FROM user_location WHERE user_id=? AND province = ? AND city = ? AND town=?)";
             Object[] createUserAddressParams = new Object[]{userId,region1,region2,region3,userId,region1,region2,region3};
