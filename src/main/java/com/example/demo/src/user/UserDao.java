@@ -207,11 +207,17 @@ public class UserDao {
 
         if(locCnt<2){
             String createUserAddressQuery = "insert into user_location (user_id, province, city, town) VALUES (?,?,?,?)";
-            Object[] createUserAddressParams = new Object[]{userId,region1,region2,region3};
-            this.jdbcTemplate.update(createUserAddressQuery, createUserAddressParams);
+            String createAddressQuery="INSERT INTO user_location (user_id,province, city,town) SELECT ?, ?, ?, ?\n" +
+                    "WHERE NOT EXISTS (SELECT * FROM user_location WHERE user_id=? AND province = ? AND city = ? AND town=?)";
+            Object[] createUserAddressParams = new Object[]{userId,region1,region2,region3,userId,region1,region2,region3};
+            this.jdbcTemplate.update(createAddressQuery, createUserAddressParams);
             String lastInsertIdQuery = "select last_insert_id()";
             int locationId=this.jdbcTemplate.queryForObject(lastInsertIdQuery,int.class);
-            userAddress=getUserAddress(locationId);
+            if(locationId==0){
+                userAddress=new UserAddress();
+            }else{
+                userAddress=getUserAddress(locationId);
+            }
         }else{
            userAddress=new UserAddress();
         }
