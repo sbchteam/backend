@@ -145,7 +145,7 @@ public class UserDao {
         String getUsersQuery = "" +
                 "select post.id,title,category, price, post.created_at,img\n" +
                 "from post\n" +
-                "join post_join p on post.id = p.post_id && p.status=1\n" +
+                "join post_join p on post.id = p.post_id && p.status=1 && p.joinStatus=1\n" +
                 "join category c on post.category_id = c.id\n" +
                 "left join post_image pi on post.id = pi.post_id\n" +
                 "where p.user_id=?\n" +
