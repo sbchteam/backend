@@ -136,7 +136,22 @@ public class PostController {
     public BaseResponse<List<PostRecommend>> getPostsRecommend(@PathVariable("postId") int postId) {
         // Get Users
         try{
-            List<PostRecommend> postRecommends = postProvider.getPostsRecommend(postId);
+            int userId = jwtService.getUserIdx();
+            List<PostRecommend> postRecommends = postProvider.getPostsRecommend(postId,userId);
+            return new BaseResponse<>(postRecommends);
+        } catch(BaseException exception){
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+    /**
+     * 공구 검색페이지 동네 인기 공구 추천(밑) api
+     * [Get] /posts/recommend */
+    @ResponseBody
+    @GetMapping("/recommend") // (GET) 127.0.0.1:9000/app/products/:id 해도 됨...
+    public BaseResponse<List<PostRecommend>> getSearchRecommend(@RequestParam(required = false) String town) {
+        try{
+            int userId = jwtService.getUserIdx();
+            List<PostRecommend> postRecommends = postProvider.getSearchRecommend(town,userId);
             return new BaseResponse<>(postRecommends);
         } catch(BaseException exception){
             return new BaseResponse<>((exception.getStatus()));

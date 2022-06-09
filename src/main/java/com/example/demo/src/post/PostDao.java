@@ -287,8 +287,8 @@ public class PostDao {
                 getPostImgParams);
     }
 
-    /*작품 추천 api*/
-    public List<PostRecommend> getPostsRecommend(int PostId){
+    /*공구 추천 api*/
+    public List<PostRecommend> getPostsRecommend(int PostId,int userId){
         String getPostCategory="" +
                 "select category_id\n" +
                 "from post\n" +
@@ -312,7 +312,11 @@ public class PostDao {
                 "from post p\n" +
                 "join user_location ul on p.location_id = ul.id\n" +
                 "left join post_image pi on p.id = pi.post_id\n" +
-                "where town like ? && p.category_id=? && p.id!=? && p.transaction_status!='complete' && p.status=1 && TIMESTAMPDIFF(minute , now(),p.date)>0\n" +
+                "where town like ? && p.category_id=? && p.id!=? && p.transaction_status!='complete' && p.status=1 && TIMESTAMPDIFF(minute , now(),p.date)>0 && p.user_id not in (\n" +
+                "    select user_id\n" +
+                "    from user_block\n" +
+                "    where blocker_id=?\n" +
+                ")\n" +
                 "group by p.id\n" +
                 "limit 3;";
         String keyword='%'+town+'%';
@@ -322,7 +326,43 @@ public class PostDao {
                         rs.getString("img"),
                         rs.getString("title"),
                         rs.getInt("price")
-                ),keyword,categoryId,getPostId);
+                ),keyword,categoryId,getPostId,userId);
+    }
+    /*인기 공구 추천 api*/
+    public List<PostRecommend> getSearchRecommend(String town, int userId){
+
+        String getSearchRecommendQuery =
+                "select *\n" +
+                "from(\n" +
+                "select p.id,title, price, num,ifnull(interestNum,0) as interest_num, img\n" +
+                "from post p\n" +
+                "left join post_interest pi\n" +
+                "on p.id = pi.post_id\n" +
+                "left join post_image pimg\n" +
+                "on p.id = pimg.post_id\n" +
+                "left join (\n" +
+                "    select post_id, count(*) as interestNum\n" +
+                "    from post_interest\n" +
+                "    group by post_id\n" +
+                ") incnt on p.id=incnt.post_id\n" +
+                "left join user_location ul on p.location_id =ul.id\n" +
+                "where p.status=1 && town like ? && p.transaction_status!='complete' && TIMESTAMPDIFF(minute , now(),p.date)>0 && p.user_id not in (\n" +
+                "    select user_id\n" +
+                "    from user_block\n" +
+                "    where blocker_id=?\n" +
+                ")\n" +
+                "group by p.id) plist \n" +
+                "order by plist.interest_num desc\n" +
+                "limit 5";
+        String keyword='%'+town+'%';
+
+        return this.jdbcTemplate.query(getSearchRecommendQuery,
+                (rs, rowNum) -> new PostRecommend(
+                        rs.getInt("plist.id"),
+                        rs.getString("img"),
+                        rs.getString("title"),
+                        rs.getInt("price")
+                ),keyword,userId);
     }
 
     public PostInterest PushPostInterest(int postId, int userId){
