@@ -114,9 +114,9 @@ public class PostProvider {
         }
     }
     /** 공구 추천하기 */
-    public List<PostRecommend> getPostsRecommend(int postId) throws BaseException{
+    public List<PostRecommend> getPostsRecommend(int postId,int userId) throws BaseException{
         try{
-            List<PostRecommend> postRecommends = postDao.getPostsRecommend(postId);
+            List<PostRecommend> postRecommends = postDao.getPostsRecommend(postId,userId);
             return postRecommends;
         }
         catch (Exception exception) {

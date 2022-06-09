@@ -288,7 +288,7 @@ public class PostDao {
     }
 
     /*작품 추천 api*/
-    public List<PostRecommend> getPostsRecommend(int PostId){
+    public List<PostRecommend> getPostsRecommend(int PostId,int userId){
         String getPostCategory="" +
                 "select category_id\n" +
                 "from post\n" +
@@ -312,7 +312,11 @@ public class PostDao {
                 "from post p\n" +
                 "join user_location ul on p.location_id = ul.id\n" +
                 "left join post_image pi on p.id = pi.post_id\n" +
-                "where town like ? && p.category_id=? && p.id!=? && p.transaction_status!='complete' && p.status=1 && TIMESTAMPDIFF(minute , now(),p.date)>0\n" +
+                "where town like ? && p.category_id=? && p.id!=? && p.transaction_status!='complete' && p.status=1 && TIMESTAMPDIFF(minute , now(),p.date)>0 && p.user_id not in (\n" +
+                "    select user_id\n" +
+                "    from user_block\n" +
+                "    where blocker_id=?\n" +
+                ")\n" +
                 "group by p.id\n" +
                 "limit 3;";
         String keyword='%'+town+'%';
@@ -322,7 +326,7 @@ public class PostDao {
                         rs.getString("img"),
                         rs.getString("title"),
                         rs.getInt("price")
-                ),keyword,categoryId,getPostId);
+                ),keyword,categoryId,getPostId,userId);
     }
 
     public PostInterest PushPostInterest(int postId, int userId){

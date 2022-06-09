@@ -136,12 +136,27 @@ public class PostController {
     public BaseResponse<List<PostRecommend>> getPostsRecommend(@PathVariable("postId") int postId) {
         // Get Users
         try{
-            List<PostRecommend> postRecommends = postProvider.getPostsRecommend(postId);
+            int userId = jwtService.getUserIdx();
+            List<PostRecommend> postRecommends = postProvider.getPostsRecommend(postId,userId);
             return new BaseResponse<>(postRecommends);
         } catch(BaseException exception){
             return new BaseResponse<>((exception.getStatus()));
         }
     }
+//    /**
+//     * 공구 검색페이지 인기 공구 추천(밑) api
+//     * [Get] /posts/recommend */
+//    @ResponseBody
+//    @GetMapping("/recommend") // (GET) 127.0.0.1:9000/app/products/:id 해도 됨...
+//    public BaseResponse<List<PostRecommend>> getSearchRecommend() {
+//        try{
+//            int userIdx = jwtService.getUserIdx();
+//            List<PostRecommend> postRecommends = postProvider.getSearchRecommend();
+//            return new BaseResponse<>(postRecommends);
+//        } catch(BaseException exception){
+//            return new BaseResponse<>((exception.getStatus()));
+//        }
+//    }
 
     /**
      * 공구에 찜누르기/해제하기 API
