@@ -330,7 +330,7 @@ public class PostDao {
     }
     /*인기 공구 추천 api*/
     public List<PostRecommend> getSearchRecommend(String town, int userId){
-        System.out.println("여기");
+
         String getSearchRecommendQuery =
                 "select *\n" +
                 "from(\n" +
@@ -355,7 +355,7 @@ public class PostDao {
                 "order by plist.interest_num desc\n" +
                 "limit 5";
         String keyword='%'+town+'%';
-        System.out.println("여기2");
+
         return this.jdbcTemplate.query(getSearchRecommendQuery,
                 (rs, rowNum) -> new PostRecommend(
                         rs.getInt("plist.id"),
