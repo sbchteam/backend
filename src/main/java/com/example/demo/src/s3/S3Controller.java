@@ -23,17 +23,17 @@ public class S3Controller {
     private final UserDao userDao;
 
     @PostMapping("/images")
-    public String upload(@RequestParam("img") String img, @RequestParam(required=false) int id, String imgType) throws IOException {
+    public String upload(@RequestParam("images") MultipartFile multipartFile, @RequestParam(required=false) int id, String imgType) throws IOException {
         String imgUrl="";
         if(imgType.equals("post")){
-           // imgUrl=s3Uploader.uploadPost(multipartFile,id); //postId넣어줌
-            postDao.putPostImage(id,img);
-            imgUrl="사진등록성공";
+            imgUrl=s3Uploader.uploadPost(multipartFile,id); //postId넣어줌
+//            postDao.putPostImage(id,img);
+//            imgUrl="사진등록성공";
         }
         else if(imgType.equals("profile")){
-            //imgUrl=s3Uploader.uploadProfile(multipartFile,id); //userId넣어줌
-            userDao.putProfileImage(id,img);
-            imgUrl="프로필사진등록성공";
+            imgUrl=s3Uploader.uploadProfile(multipartFile,id); //userId넣어줌
+//            userDao.putProfileImage(id,img);
+//            imgUrl="프로필사진등록성공";
         }
         return imgUrl;
     }
