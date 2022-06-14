@@ -10,6 +10,7 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 public class UserPosts {
     private int postId;
+    private int userId;
     private String category;
     private String title;
     private int price;

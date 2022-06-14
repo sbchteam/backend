@@ -84,7 +84,7 @@ public class UserDao {
     /*주최한 공구 조회*/
     public List<UserPosts> getUserHost(int userId){
         String getUsersQuery = "" +
-                "select post.id,title,category, price, post.created_at,img\n" +
+                "select post.user_id,post.id,title,category, price, post.created_at,img\n" +
                 "from post\n" +
                 "join category c on post.category_id = c.id\n" +
                 "left join post_image pi on post.id = pi.post_id\n" +
@@ -94,6 +94,7 @@ public class UserDao {
         return this.jdbcTemplate.query(getUsersQuery,
                 (rs,rowNum) -> new UserPosts(
                         rs.getInt("post.id"),
+                        rs.getInt("post.user_id"),
                         rs.getString("category"),
                         rs.getString("title"),
                         rs.getInt("price"),
@@ -121,7 +122,7 @@ public class UserDao {
    /*찜한 공구 조회*/
     public List<UserPosts> getUserInterest(int userId){
         String getUsersQuery = "" +
-                "select post.id,title,category, price, post.created_at,img\n" +
+                "select post.user_id,post.id,title,category, price, post.created_at,img\n" +
                 "from post\n" +
                 "join post_interest p on post.id = p.post_id && p.status=1\n" +
                 "join category c on post.category_id = c.id\n" +
@@ -132,6 +133,7 @@ public class UserDao {
         return this.jdbcTemplate.query(getUsersQuery,
                 (rs,rowNum) -> new UserPosts(
                         rs.getInt("post.id"),
+                        rs.getInt("post.user_id"),
                         rs.getString("category"),
                         rs.getString("title"),
                         rs.getInt("price"),
@@ -143,7 +145,7 @@ public class UserDao {
     /*참여한 공구 조회*/
     public List<UserPosts> getUserJoin(int userId){
         String getUsersQuery = "" +
-                "select post.id,title,category, price, post.created_at,img\n" +
+                "select post.user_id,post.id,title,category, price, post.created_at,img\n" +
                 "from post\n" +
                 "join post_join p on post.id = p.post_id && p.status=1 && p.joinStatus=1\n" +
                 "join category c on post.category_id = c.id\n" +
@@ -154,6 +156,7 @@ public class UserDao {
         return this.jdbcTemplate.query(getUsersQuery,
                 (rs,rowNum) -> new UserPosts(
                         rs.getInt("post.id"),
+                        rs.getInt("post.user_id"),
                         rs.getString("category"),
                         rs.getString("title"),
                         rs.getInt("price"),
