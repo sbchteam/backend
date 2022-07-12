@@ -42,7 +42,6 @@ public class UserController {
      * [GET] /users
      * 회원 번호 및 이메일 검색 조회 API
      */
-    //Query String
     @ResponseBody
     @GetMapping("")
     public BaseResponse<List<User>> getUsers() {
