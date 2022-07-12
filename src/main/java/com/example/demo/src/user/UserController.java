@@ -41,8 +41,6 @@ public class UserController {
      * 회원 조회 API
      * [GET] /users
      * 회원 번호 및 이메일 검색 조회 API
-     * [GET] /users? Email=
-     * @return BaseResponse<List<GetUserRes>>
      */
     //Query String
     @ResponseBody
