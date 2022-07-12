@@ -1,5 +1,5 @@
 server:
-port: 9000
+  port: 9000
 
 spring:
   application:
@@ -12,14 +12,6 @@ spring:
     password: jisunowh11 # 변경해주세요
     driver-class-name: com.mysql.cj.jdbc.Driver # mysql 8버전
 
-
-  devtools:
-    livereload:
-      enabled: true
-    restart:
-      enabled: false
-  freemarker:
-    cache: false
 
 
 cloud:
