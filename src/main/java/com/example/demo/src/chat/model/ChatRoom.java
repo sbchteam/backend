@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.sql.Timestamp;
 import java.util.UUID;
 
 @Getter
@@ -12,14 +13,18 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ChatRoom {
-    private String roomId;
-    private String roomName;
+    private int roomId;
+    private int userId;
+    private String nick;
+    private String profileImg;
+    private String message;
+    private Timestamp lastTime;
 
 
-    public static ChatRoom create(String name) {
-        ChatRoom room = new ChatRoom();
-        room.roomId = UUID.randomUUID().toString();
-        room.roomName = name;
-        return room;
-    }
+//    public static ChatRoom create(String name) {
+//        ChatRoom room = new ChatRoom();
+//        room.roomId = UUID.randomUUID().toString();
+//        room.roomName = name;
+//        return room;
+//    }
 }
