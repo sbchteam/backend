@@ -34,11 +34,11 @@ com/example/demo/src/post/PostDao.java
  com.example.demo.src.post.PostDao
 com/example/demo/src/user/model/PostUserRes.java
  com.example.demo.src.user.model.PostUserRes
-com/example/demo/src/chat/ChatDao.java
- com.example.demo.src.chat.ChatDao
 com/example/demo/src/chat/model/ChatMessage.java
  com.example.demo.src.chat.model.ChatMessage
  com.example.demo.src.chat.model.ChatMessage$MessageType
+com/example/demo/src/chat/ChatDao.java
+ com.example.demo.src.chat.ChatDao
 com/example/demo/config/BaseResponse.java
  com.example.demo.config.BaseResponse
 com/example/demo/src/post/model/Category.java

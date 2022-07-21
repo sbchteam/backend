@@ -14,13 +14,14 @@ import java.util.UUID;
 @AllArgsConstructor
 public class ChatRoom {
     private int roomId;
-    private int userId;
-    private String nick;
-    private String profileImg;
+    private int postId;
+    private String title;
     private String message;
     private Timestamp lastTime;
 
-
+//    private int userId;
+//    private String nick;
+//    private String profileImg;
 //    public static ChatRoom create(String name) {
 //        ChatRoom room = new ChatRoom();
 //        room.roomId = UUID.randomUUID().toString();

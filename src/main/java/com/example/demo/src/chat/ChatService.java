@@ -35,13 +35,13 @@ public class ChatService {
         Collections.reverse(chatRooms);
         return chatRooms;
     }
-    // 특정 공구 채팅방 목록 반환 -주최자 필요
-    public List<ChatRoom> getPostRooms(int userId,int postId) {
-        //채팅방 최근 생성 순으로 반환
-        List<ChatRoom> chatRooms= chatDao.getPostRooms(userId,postId);
-        Collections.reverse(chatRooms);
-        return chatRooms;
-    }
+//    // 특정 공구 채팅방 목록 반환 -주최자 필요
+//    public List<ChatRoom> getPostRooms(int userId,int postId) {
+//        //채팅방 최근 생성 순으로 반환
+//        List<ChatRoom> chatRooms= chatDao.getPostRooms(userId,postId);
+//        Collections.reverse(chatRooms);
+//        return chatRooms;
+//    }
 
     //채팅방 하나 불러오기
     public List<ChatRoomDetail> getRoom(int roomId) {
@@ -51,7 +51,7 @@ public class ChatService {
     }
 
     //채팅방 생성
-    public int createRoom(int postId, int userId) { //생성한 유저id=채팅하기 누른 유저id(무조건 참가자)
+    public int createRoom(int postId, int userId) { //생성한 유저 - 주최자
         //ChatRoom chatRoom = ChatRoom.create(postId);
         int roomId=chatDao.createRoom(postId,userId);
         return roomId;
@@ -60,5 +60,10 @@ public class ChatService {
     //메시지 저장
     public void createMessage(ChatMessage message) { //생성한 유저id=채팅하기 누른 유저id(무조건 참가자)
         chatDao.createMessage(message);
+    }
+
+    //채팅방 입장
+    public void enterRoom(int roomId, int userId) {
+        chatDao.enterRoom(roomId,userId);
     }
 }

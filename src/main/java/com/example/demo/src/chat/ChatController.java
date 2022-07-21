@@ -3,6 +3,7 @@ package com.example.demo.src.chat;
 
 import com.example.demo.config.BaseException;
 import com.example.demo.config.BaseResponse;
+import com.example.demo.src.chat.model.ChatMessage;
 import com.example.demo.src.chat.model.ChatRoom;
 import com.example.demo.src.chat.model.ChatRoomDetail;
 import com.example.demo.src.user.UserProvider;
@@ -26,12 +27,6 @@ public class ChatController {
     private final JwtService jwtService;
 
 
-
-    // 채팅 리스트 화면
-    @GetMapping("/room")
-    public String rooms(Model model) {
-        return "chat/room";
-    }
     // 모든 채팅방 목록 반환
     @GetMapping("/rooms")
     @ResponseBody
@@ -44,18 +39,18 @@ public class ChatController {
             return new BaseResponse<>((exception.getStatus()));
         }
     }
-    // 특정 공구 채팅방 목록 반환 -주최자 필요
-    @GetMapping("/rooms/{postId}")
-    @ResponseBody
-    public BaseResponse<List<ChatRoom>> getPostRooms(@PathVariable int postId) {
-        try{
-            int userId=jwtService.getUserIdx();
-            List<ChatRoom> chatRooms=chatService.getPostRooms(userId,postId);
-            return new BaseResponse<>(chatRooms);
-        } catch(BaseException exception){
-            return new BaseResponse<>((exception.getStatus()));
-        }
-    }
+//    // 특정 공구 채팅방 목록 반환 -주최자 필요
+//    @GetMapping("/rooms/{postId}")
+//    @ResponseBody
+//    public BaseResponse<List<ChatRoom>> getPostRooms(@PathVariable int postId) {
+//        try{
+//            int userId=jwtService.getUserIdx();
+//            List<ChatRoom> chatRooms=chatService.getPostRooms(userId,postId);
+//            return new BaseResponse<>(chatRooms);
+//        } catch(BaseException exception){
+//            return new BaseResponse<>((exception.getStatus()));
+//        }
+//    }
 
     // 채팅방 생성
     @PostMapping("/room")
@@ -70,12 +65,16 @@ public class ChatController {
         }
     }
 
-    // 채팅방 입장 화면
-    @GetMapping("/room/enter/{roomId}")
-    public String roomDetail(Model model, @PathVariable String roomId) {
-        model.addAttribute("roomId", roomId);
-        return "chat/roomdetail";
+    // 채팅방 초대
+    @PostMapping("/room/invite")
+    @ResponseBody
+    public BaseResponse<String> enterRoom(@RequestBody ChatMessage message) {
+        chatService.enterRoom(message.getRoomId(),message.getSender());
+        String result="초대완료";
+        return new BaseResponse<>(result);
     }
+
+
     // 특정 채팅방 조회
     @GetMapping("/room/{roomId}")
     @ResponseBody
@@ -87,6 +86,18 @@ public class ChatController {
         } catch(BaseException exception){
             return new BaseResponse<>((exception.getStatus()));
         }
+    }
 
+
+    // 채팅 리스트 화면
+    @GetMapping("/room")
+    public String rooms(Model model) {
+        return "chat/room";
+    }
+    // 채팅방 입장 화면
+    @GetMapping("/room/enter/{roomId}")
+    public String roomDetail(Model model, @PathVariable String roomId) {
+        model.addAttribute("roomId", roomId);
+        return "chat/roomdetail";
     }
 }
