@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 import static com.example.demo.config.BaseResponseStatus.*;
+import static com.example.demo.config.BaseResponseStatus.POST_INVALID_WORD;
 import static com.example.demo.utils.ValidationRegex.isRegexEmail;
 import static com.example.demo.utils.ValidationRegex.isRegexPassword;
 
@@ -218,6 +219,12 @@ public class PostController {
     @PostMapping("/save")
     public BaseResponse<PostDetail> savePost(@RequestBody Post post) {
         try {
+            String [] invalidWord={"술","소주","맥주","담배","막걸리","와인"};
+            for (String word:invalidWord){
+                if (post.getTitle().contains(word) || post.getProductName().contains(word) || post.getContent().contains(word)){
+                    return new BaseResponse<>(POST_INVALID_WORD);
+                }
+            }
             int userId = jwtService.getUserIdx();
             PostDetail savePost = postService.create(post, userId);
             return new BaseResponse<>(savePost);
