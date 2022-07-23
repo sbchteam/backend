@@ -20,10 +20,10 @@ com/example/demo/src/s3/S3Uploader.java
  com.example.demo.src.s3.S3Uploader
 com/example/demo/config/BaseResponseStatus.java
  com.example.demo.config.BaseResponseStatus
+com/example/demo/src/chat/ChatController.java
+ com.example.demo.src.chat.ChatController
 com/example/demo/src/s3/S3Controller.java
  com.example.demo.src.s3.S3Controller
-com/example/demo/src/chat/model/ChatController.java
- com.example.demo.src.chat.ChatController
 com/example/demo/src/post/PostService.java
  com.example.demo.src.post.PostService
 com/example/demo/src/chat/MessageController.java
@@ -34,11 +34,11 @@ com/example/demo/src/post/PostDao.java
  com.example.demo.src.post.PostDao
 com/example/demo/src/user/model/PostUserRes.java
  com.example.demo.src.user.model.PostUserRes
-com/example/demo/src/chat/ChatDao.java
- com.example.demo.src.chat.ChatDao
 com/example/demo/src/chat/model/ChatMessage.java
  com.example.demo.src.chat.model.ChatMessage
  com.example.demo.src.chat.model.ChatMessage$MessageType
+com/example/demo/src/chat/ChatDao.java
+ com.example.demo.src.chat.ChatDao
 com/example/demo/config/BaseResponse.java
  com.example.demo.config.BaseResponse
 com/example/demo/src/post/model/Category.java
