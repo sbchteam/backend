@@ -40,7 +40,7 @@ public enum BaseResponseStatus {
     POST_USERS_ANOTHER_PASSWORD(false, 2023, "비밀번호가 같지 않습니다."),
 
     POST_INVALID_TRANSLATE_CHANGE(false, 2030, "open, deal, complete 중 하나를 입력하셔야 합니다."),
-
+    POST_INVALID_WORD(false,2040,"부적합한 단어입니다."),
     /**
      * 3000 : Response 오류
      */
