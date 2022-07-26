@@ -6,6 +6,7 @@ import com.example.demo.src.chat.model.ChatMessage;
 import com.example.demo.src.chat.model.ChatRoom;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.web.bind.annotation.*;
@@ -37,7 +38,6 @@ public class MessageController {
         sendingOperations.convertAndSend("/sub/chat/room/"+message.getRoomId(),message);
 
 
-
-
     }
+
 }
