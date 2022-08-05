@@ -12,6 +12,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ChatRoomDetail {
+    private int postId;
     private int userId;
     private String nick;
     private String profileImg;

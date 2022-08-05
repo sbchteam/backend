@@ -15,7 +15,10 @@ import java.util.UUID;
 public class ChatRoom {
     private int roomId;
     private int postId;
+    private String roomImg;
     private String title;
+    private int price;
+    private int num;
     private String message;
     private Timestamp lastTime;
 

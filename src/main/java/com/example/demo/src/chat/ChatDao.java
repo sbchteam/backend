@@ -78,10 +78,11 @@ public class ChatDao {
     public List<ChatRoom> getRooms(int userId){
 
         String getUserRooms = "" +
-                "select cm.room_id,p.id as post_id ,p.title,message, cm.created_at\n" +
+                "select cm.room_id,p.id as post_id ,profile_img, p.title, p.price,p.num, message, cm.created_at\n" +
                 "from chat_message cm\n" +
                 "join chat_room cr on cm.room_id = cr.id\n" +
                 "join post p on cr.post_id = p.id\n" +
+                "join user u on p.user_id = u.id\n" +
                 "join(\n" +
                 "    select max(cm.created_at) as max_created\n" +
                 "    from chat_message cm\n" +
@@ -96,7 +97,10 @@ public class ChatDao {
                 (rs,rowNum)-> new ChatRoom(
                         rs.getInt("cm.room_id"),
                         rs.getInt("post_id"),
+                        rs.getString("profile_img"),
                         rs.getString("p.title"),
+                        rs.getInt("p.price"),
+                        rs.getInt("p.num"),
                         rs.getString("message"),
                         rs.getTimestamp("cm.created_at")
                 ),
@@ -137,13 +141,15 @@ public class ChatDao {
     public List<ChatRoomDetail> getRoom(int roomId){
 
         String getUserRoom = "" +
-                "select u.id,nick,profile_img,message,cm.created_at\n" +
+                "select post_id,u.id, nick,profile_img,message,cm.created_at\n" +
                 "from chat_message cm\n" +
+                "join chat_room cr on cm.room_id = cr.id\n" +
                 "join user u on cm.sender_id = u.id\n" +
                 "where room_id=?\n" +
                 "order by cm.created_at";
         return this.jdbcTemplate.query(getUserRoom ,
                 (rs,rowNum)-> new ChatRoomDetail (
+                        rs.getInt("post_id"),
                         rs.getInt("u.id"),
                         rs.getString("nick"),
                         rs.getString("profile_img"),
