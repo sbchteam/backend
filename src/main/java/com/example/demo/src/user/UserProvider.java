@@ -133,7 +133,7 @@ public class UserProvider {
                 throw new BaseException(FAILED_TO_LOGIN);
             }
             String jwt = jwtService.createJwt(userId);
-            return new PostLoginRes(userId,jwt);
+            return new PostLoginRes(userId,jwt,user.getNick(), user.getProfileImg());
         }
         else{
             throw new BaseException(FAILED_TO_LOGIN);
