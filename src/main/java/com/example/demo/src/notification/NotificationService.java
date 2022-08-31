@@ -21,7 +21,7 @@ import java.util.List;
 @Component
 public class NotificationService {
 
-    private final String API_URL = "https://fcm.googleapis.com/v1/projects/sbch-project/messages:send";
+    private final String API_URL = "https://fcm.googleapis.com/v1/projects/{프로젝트 ID}/messages:send";
     final ObjectMapper objectMapper;
 
     public void sendMessageTo(String targetToken, String title, String body) throws IOException {
@@ -57,7 +57,7 @@ public class NotificationService {
     }
 
     private String getAccessToken() throws IOException {
-        String firebaseConfigPath = "firebase/sbch-project-firebase-adminsdk-lythf-f85c60bd19.json";
+        String firebaseConfigPath = "firebase/sbch-project-firebase-adminsdk.json";
 
         GoogleCredentials googleCredentials = GoogleCredentials
                 .fromStream(new ClassPathResource(firebaseConfigPath).getInputStream())
