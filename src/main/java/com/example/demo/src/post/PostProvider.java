@@ -155,6 +155,17 @@ public class PostProvider {
 
             postDetailImg.setPostDetail(postDetail);
             postDetailImg.setImgUrls(imgUrls);
+
+            if (postDetail.getTransactionStatus().equals("deal")){
+                postDetailImg.setTransactionStatus("거래 중");
+            }
+            else if (postDetail.getTransactionStatus().equals("open")){
+                postDetailImg.setTransactionStatus("모집 중");
+            }
+            else if (postDetail.getTransactionStatus().equals("complete")){
+                postDetailImg.setTransactionStatus("거래 완료");
+            }
+
             return postDetailImg;
         } catch (Exception exception) {
             throw new BaseException(DATABASE_ERROR);
